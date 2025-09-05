@@ -4,29 +4,22 @@ from fastapi import HTTPException, status
 
 
 class ResponseHelper:
-    """Helper class for API responses"""
-
     @staticmethod
     def success(data: Any = None, message: str = "Success") -> Dict[str, Any]:
-        """Create success response"""
         return {"success": True, "message": message, "data": data}
 
     @staticmethod
     def error(
         message: str = "Error occurred", status_code: int = status.HTTP_400_BAD_REQUEST
     ) -> HTTPException:
-        """Create error response"""
         return HTTPException(
             status_code=status_code, detail={"success": False, "message": message}
         )
 
 
 class PaginationHelper:
-    """Helper class for pagination"""
-
     @staticmethod
     def paginate(query, page: int = 1, size: int = 10):
-        """Apply pagination to SQLAlchemy query"""
         if page < 1:
             page = 1
         if size < 1:

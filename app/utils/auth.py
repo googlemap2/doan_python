@@ -44,7 +44,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 def verify_token(token: str) -> Optional[str]:
-    """Verify JWT token and return username"""
     try:
         payload = jwt.decode(
             token, settings.secret_key, algorithms=[settings.algorithm]
@@ -80,7 +79,6 @@ def get_current_user(
 
 
 def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
-    """Get current active user"""
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
