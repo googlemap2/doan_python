@@ -4,6 +4,7 @@ import logging
 
 from app.config.settings import settings
 from app.config.database import engine, Base
+from app.middleware.auth_middleware import AuthenticationMiddleware
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -27,13 +28,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(SimpleJWTMiddleware)
+app.add_middleware(AuthenticationMiddleware)
 
 
 @app.get("/")
 async def root():
     return {
         "message": "API đồ án môn học!",
+        "host": request.headers.get("host"),
         "app": settings.app_name,
         "version": settings.app_version,
         "environment": settings.environment,

@@ -14,6 +14,7 @@ class User(Base):
     address = Column(String(50), nullable=True)
     password = Column(String(255), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
+    is_active = Column(Integer, default=1)
 
     inventories = relationship("Inventory", back_populates="user")
     orders = relationship("Order", back_populates="user")

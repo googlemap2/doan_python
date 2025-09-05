@@ -9,14 +9,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from app.config.database import Base
 from app.config.settings import settings
-from app.models.user import User
-from app.models.brand import Brand
-from app.models.product import Product
-from app.models.inventory import Inventory
-from app.models.customer import Customer
-from app.models.order import Order
-from app.models.order_item import OrderItem
-from app.models.order_item_inventory import OrderItemInventory
 
 config = context.config
 
