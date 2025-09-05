@@ -10,6 +10,7 @@ from app.utils.auth import verify_token
 from app.models.user import User
 from app.middleware.auth_config import (
     EXCLUDED_PATHS,
+    EXCLUDED_PATHS_WITH_METHODS,
     LOG_AUTH_REQUESTS,
     ERROR_MESSAGES,
 )
@@ -21,18 +22,45 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
     def __init__(self, app: ASGIApp):
         super().__init__(app)
         self.excluded_paths = EXCLUDED_PATHS
+        self.excluded_paths_with_methods = EXCLUDED_PATHS_WITH_METHODS
 
-    def is_excluded_path(self, path: str) -> bool:
+    def is_excluded_path(self, path: str, method: str) -> bool:
         if path in self.excluded_paths:
             return True
+
+        if path in self.excluded_paths_with_methods:
+            allowed_methods = self.excluded_paths_with_methods[path]
+            if method.upper() in [m.upper() for m in allowed_methods]:
+                return True
+
+        # Kiểm tra wildcard patterns (ví dụ: /api/public/*)
+        for excluded_path in self.excluded_paths:
+            if excluded_path.endswith("*"):
+                pattern = excluded_path[:-1]  # Bỏ dấu *
+                if path.startswith(pattern):
+                    return True
+
+        for excluded_path, methods in self.excluded_paths_with_methods.items():
+            if excluded_path.endswith("*"):
+                pattern = excluded_path[:-1]  # Bỏ dấu *
+                if path.startswith(pattern) and method.upper() in [
+                    m.upper() for m in methods
+                ]:
+                    return True
 
         return False
 
     async def dispatch(self, request: Request, call_next):
         path = request.url.path
         method = request.method
-        print(path, method)
-        if self.is_excluded_path(path):
+
+        # Log cho debugging
+        if LOG_AUTH_REQUESTS:
+            logger.info(f"Auth check: {method} {path}")
+
+        if self.is_excluded_path(path, method):
+            if LOG_AUTH_REQUESTS:
+                logger.info(f"Path excluded: {method} {path}")
             response = await call_next(request)
             return response
 

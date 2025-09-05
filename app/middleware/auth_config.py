@@ -1,13 +1,17 @@
+# Excluded paths - có thể là string (tất cả methods) hoặc dict {path: [methods]}
 EXCLUDED_PATHS = {
     "/",
     "/health",
     "/docs",
     "/redoc",
     "/openapi.json",
-    "/user/login",
-    "/user/register",
     "/favicon.ico",
-    "/user/",
+}
+
+# Excluded paths với specific HTTP methods
+EXCLUDED_PATHS_WITH_METHODS = {
+    "/user/login": ["POST"],
+    "/user/register": ["POST"],
 }
 
 ENABLE_AUTH_MIDDLEWARE = True
