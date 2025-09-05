@@ -6,8 +6,7 @@ from datetime import datetime
 # Base schemas
 class UserBase(BaseModel):
     username: str
-    email: Optional[str]
-    full_name: Optional[str] = None
+    fullname: Optional[str] = None
     is_active: bool = True
 
 
@@ -16,16 +15,23 @@ class UserLogin(BaseModel):
     password: str
 
 
-class UserCreate(UserBase):
+class fullnameUserCreate(UserBase):
     password: str
 
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
-    email: Optional[str] = None
-    full_name: Optional[str] = None
+    fullname: Optional[str] = None
     is_active: Optional[bool] = None
     password: Optional[str] = None
+
+
+class UserCreate(BaseModel):
+    username: str
+    fullname: str
+    is_active: Optional[bool] = None
+    password: str
+    phone: str
 
 
 class UserInDB(UserBase):

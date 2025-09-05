@@ -8,7 +8,7 @@ class Customer(Base):
     __tablename__ = "customers"
 
     id = Column(Integer, primary_key=True)
-    full_name = Column(String(100), nullable=False)
+    fullname = Column(String(100), nullable=False)
     phone = Column(String(20), unique=True, nullable=False)
     email = Column(String(100))
     address = Column(Text)
@@ -16,4 +16,4 @@ class Customer(Base):
     orders = relationship("Order", back_populates="customer")
 
     def __repr__(self):
-        return f"<Customer(id={self.id}, full_name='{self.full_name}', phone='{self.phone}')>"
+        return f"<Customer(id={self.id}, fullname='{self.fullname}', phone='{self.phone}')>"

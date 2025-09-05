@@ -3,6 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 from app.config.settings import settings
 from app.config.database import engine, Base
+
+# Import all models to ensure they are registered
+from app.models import *
+
 from app.middleware.auth_middleware import AuthenticationMiddleware
 from app.routes.user_routes import router as user_router
 

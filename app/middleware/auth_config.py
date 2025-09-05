@@ -7,6 +7,7 @@ EXCLUDED_PATHS = {
     "/user/login",
     "/user/register",
     "/favicon.ico",
+    "/user/",
 }
 
 ENABLE_AUTH_MIDDLEWARE = True
