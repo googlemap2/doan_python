@@ -1,0 +1,40 @@
+from sqlalchemy import (
+    Column,
+    String,
+    Integer,
+    BigInteger,
+    DateTime,
+    ForeignKey,
+    CheckConstraint,
+    func,
+)
+from sqlalchemy.orm import relationship
+from app.config.database import Base
+
+
+class Inventory(Base):
+
+    __tablename__ = "inventory"
+
+    id = Column(Integer, primary_key=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
+    supplier = Column(String)
+    quantity = Column(Integer, nullable=False)
+    quantity_in = Column(Integer, nullable=False)
+    price = Column(BigInteger, nullable=False)
+    created_at = Column(DateTime, server_default=func.current_timestamp())
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    __table_args__ = (
+        CheckConstraint("quantity >= 0", name="check_quantity_positive"),
+        CheckConstraint("quantity_in >= 0", name="check_quantity_in_positive"),
+    )
+
+    product = relationship("Product", back_populates="inventories")
+    user = relationship("User", back_populates="inventories")
+    order_item_inventories = relationship(
+        "OrderItemInventory", back_populates="inventory"
+    )
+
+    def __repr__(self):
+        return f"<Inventory(id={self.id}, product_id={self.product_id}, quantity={self.quantity})>"
