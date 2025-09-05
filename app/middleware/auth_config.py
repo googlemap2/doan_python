@@ -1,4 +1,3 @@
-# Excluded paths - có thể là string (tất cả methods) hoặc dict {path: [methods]}
 EXCLUDED_PATHS = {
     "/",
     "/health",
@@ -8,7 +7,6 @@ EXCLUDED_PATHS = {
     "/favicon.ico",
 }
 
-# Excluded paths với specific HTTP methods
 EXCLUDED_PATHS_WITH_METHODS = {
     "/user/login": ["POST"],
     "/user/register": ["POST"],
