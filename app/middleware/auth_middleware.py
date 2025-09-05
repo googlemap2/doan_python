@@ -26,16 +26,12 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         if path in self.excluded_paths:
             return True
 
-        for pattern in self.excluded_path_patterns:
-            if path.startswith(pattern):
-                return True
-
         return False
 
     async def dispatch(self, request: Request, call_next):
         path = request.url.path
         method = request.method
-
+        print(path, method)
         if self.is_excluded_path(path):
             response = await call_next(request)
             return response
@@ -101,7 +97,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                         },
                     )
 
-                if not user.is_active:
+                if user.is_active is not True:
                     if LOG_AUTH_REQUESTS:
                         logger.warning(f"Inactive user attempted access: {username}")
                     return JSONResponse(

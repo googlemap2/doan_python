@@ -12,7 +12,7 @@ from datetime import datetime
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.sql import table, column
-from sqlalchemy import String, Integer, Text, BigInteger, DateTime
+from sqlalchemy import Boolean, String, Integer, Text, BigInteger, DateTime
 
 
 # revision identifiers, used by Alembic.
@@ -34,7 +34,7 @@ def upgrade() -> None:
         column("address", String),
         column("password", String),
         column("created_at", DateTime),
-        column("is_active", Integer),
+        column("is_active", Boolean),
     )
     op.bulk_insert(
         brands_table,

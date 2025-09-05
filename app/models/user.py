@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, func, Integer
+from sqlalchemy import Boolean, Column, String, DateTime, func, Integer
 from sqlalchemy.orm import relationship
 from app.config.database import Base
 
@@ -14,7 +14,7 @@ class User(Base):
     address = Column(String(50), nullable=True)
     password = Column(String(255), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
-    is_active = Column(Integer, default=1)
+    is_active = Column(Boolean, default=True)
 
     inventories = relationship("Inventory", back_populates="user")
     orders = relationship("Order", back_populates="user")

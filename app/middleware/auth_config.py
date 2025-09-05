@@ -4,8 +4,8 @@ EXCLUDED_PATHS = {
     "/docs",
     "/redoc",
     "/openapi.json",
-    "/api/users/login",
-    "/api/users/register",
+    "/user/login",
+    "/user/register",
     "/favicon.ico",
 }
 

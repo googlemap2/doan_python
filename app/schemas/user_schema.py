@@ -6,9 +6,14 @@ from datetime import datetime
 # Base schemas
 class UserBase(BaseModel):
     username: str
-    email: str
+    email: Optional[str]
     full_name: Optional[str] = None
     is_active: bool = True
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
 
 
 class UserCreate(UserBase):

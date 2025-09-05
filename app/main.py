@@ -1,10 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-
 from app.config.settings import settings
 from app.config.database import engine, Base
 from app.middleware.auth_middleware import AuthenticationMiddleware
+from app.routes.user_routes import router as user_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,7 +19,6 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_hosts,
@@ -30,9 +29,11 @@ app.add_middleware(
 
 app.add_middleware(AuthenticationMiddleware)
 
+app.include_router(user_router)
+
 
 @app.get("/")
-async def root():
+async def root(request: Request):
     return {
         "message": "API đồ án môn học!",
         "host": request.headers.get("host"),
