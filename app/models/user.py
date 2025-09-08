@@ -20,9 +20,6 @@ class User(Base):
     orders = relationship("Order", back_populates="user")
 
     def to_dict(self, exclude_password: bool = True) -> dict:
-        """
-        Convert User object to dictionary, optionally excluding password
-        """
         data = {
             "id": self.id,
             "username": self.username,

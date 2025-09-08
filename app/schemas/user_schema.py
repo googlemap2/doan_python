@@ -2,11 +2,16 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
+from app.schemas.base_schema import ResponseType
 
-# Base schemas
+
+
+
 class UserBase(BaseModel):
     username: str
     fullname: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
     is_active: bool = True
 
 
@@ -15,50 +20,55 @@ class UserLogin(BaseModel):
     password: str
 
 
-class fullnameUserCreate(UserBase):
+class UserCreate(BaseModel):
+    username: str
+    fullname: str
+    phone: str
+    address: Optional[str] = None
     password: str
+    is_active: Optional[bool] = True
 
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     fullname: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
     is_active: Optional[bool] = None
     password: Optional[str] = None
 
 
-class UserCreate(BaseModel):
-    username: str
-    fullname: str
-    is_active: Optional[bool] = None
-    password: str
-    phone: str
-
-
-class UserInDB(UserBase):
+class UserResponse(BaseModel):
     id: int
+    username: str
+    fullname: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
     created_at: datetime
-    updated_at: datetime
+    is_active: bool
 
     class Config:
         from_attributes = True
 
 
-# Response schemas
-class User(UserInDB):
-    pass
+# Alias cho backward compatibility
+User = UserResponse
 
 
 class UserList(BaseModel):
-    users: list[User]
+    users: list[UserResponse]
     total: int
     page: int
     size: int
 
 
-# Authentication schemas
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class TokenResponse(ResponseType[Token]):
+    pass
 
 
 class TokenData(BaseModel):

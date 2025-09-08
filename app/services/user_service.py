@@ -28,4 +28,4 @@ class UserService:
 
     def get_users(self):
         users = self.db.query(User).all()
-        return users
+        return [user.to_dict() for user in users]

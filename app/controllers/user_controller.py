@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from app.models import user
 from app.models.user import User
-from app.schemas.user_schema import UserCreate, UserLogin
+from app.schemas.user_schema import TokenResponse, UserCreate, UserLogin
 from app.utils.auth import create_access_token, verify_password
 from app.config.database import SessionLocal
 from app.utils.auth import get_password_hash as hash_password
@@ -15,7 +15,7 @@ class UserController:
         self.db = SessionLocal()
         self.user_service = UserService()
 
-    def login_user(self, user_data: UserLogin) -> str:
+    def login_user(self, user_data: UserLogin) -> TokenResponse:
         user = self.db.query(User).filter(User.username == user_data.username).first()
         if not user:
             raise HTTPException(
@@ -30,18 +30,20 @@ class UserController:
             )
 
         access_token = create_access_token(data={"sub": user.username})
-        return ResponseHelper.success(
+        return ResponseHelper.response_data(
             data={"access_token": access_token, "token_type": "bearer"},
             message="Login successful",
         )
 
     def create_user(self, user_data: UserCreate):
         if self.user_service.create_user(user_data):
-            return ResponseHelper.success(message="User created successfully")
-        return ResponseHelper.success(message="User creation failed", success=False)
+            return ResponseHelper.response_data(message="User created successfully")
+        return ResponseHelper.response_data(
+            message="User creation failed", success=False
+        )
 
     def get_users(self):
         users = self.user_service.get_users()
-        return ResponseHelper.success(
+        return ResponseHelper.response_data(
             data=users, message="Users retrieved successfully"
         )
