@@ -26,7 +26,6 @@ def login_user(user_data: UserLogin):
 @router.post("/", response_model=CreateUserResponse)
 def create_user(user_data: UserCreate):
     return user_controller.create_user(user_data)
-    return controller.create_user(user_data)
 
 
 @router.get("/", response_model=GetUsersResponse)

@@ -1,4 +1,3 @@
-from operator import is_
 from sqlalchemy import (
     Boolean,
     Column,
@@ -12,6 +11,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from app.config.database import Base
+from app.models import brand
 
 
 class Product(Base):
@@ -30,6 +30,7 @@ class Product(Base):
     capacity = Column(String(50), nullable=False)
     is_active = Column(Boolean, default=False)
     created_at = Column(DateTime, server_default=func.current_timestamp())
+    updated_at = Column(DateTime, onupdate=func.current_timestamp())
 
     created_by = Column(Integer, ForeignKey("users.id"))
     updated_by = Column(Integer, ForeignKey("users.id"))
@@ -39,6 +40,25 @@ class Product(Base):
     order_items = relationship("OrderItem", back_populates="product")
     created_by_user = relationship("User", foreign_keys=[created_by])
     updated_by_user = relationship("User", foreign_keys=[updated_by])
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "code": self.code,
+            "brand_id": self.brand_id,
+            "description": self.description,
+            "price": self.price,
+            "compare_price": self.compare_price,
+            "image_url": self.image_url,
+            "color": self.color,
+            "capacity": self.capacity,
+            "is_active": self.is_active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "created_by": self.created_by,
+            "updated_by": self.updated_by,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
 
     def __repr__(self):
         return f"<Product(id={self.id}, name='{self.name}', code='{self.code}')>"

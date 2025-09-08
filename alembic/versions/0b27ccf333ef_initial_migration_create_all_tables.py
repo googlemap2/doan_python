@@ -87,13 +87,14 @@ def upgrade() -> None:
         sa.Column("capacity", sa.String(length=50), nullable=False),
         sa.Column("is_active", sa.Boolean(), default=True),
         sa.Column("created_by", sa.Integer(), nullable=False),
-        sa.Column("updated_by", sa.Integer(), nullable=False),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
         sa.Column(
             "created_at",
             sa.DateTime(),
             server_default=sa.text("CURRENT_TIMESTAMP"),
             nullable=True,
         ),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(
             ["brand_id"],
             ["brands.id"],

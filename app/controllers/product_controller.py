@@ -1,5 +1,8 @@
 from annotated_types import T
-from app.schemas.product_schema import CreateProduct
+from app.schemas.product_schema import (
+    CreateProduct,
+    CreateProductResponse,
+)
 from app.services.product_service import ProductService
 from app.config.database import SessionLocal
 from app.utils.helpers import ResponseHelper
@@ -11,10 +14,14 @@ class ProductController:
         self.db = SessionLocal()
         self.product_service = ProductService()
 
-    def create_product(self, product_data: CreateProduct):
-        product = self.product_service.create_product(product_data)
-        if product:
-            return ResponseHelper.response_data(
-                data=product, message="Product created successfully"
-            )
-        return ResponseHelper.response_data(False, message="Failed to create product")
+    def create_product(
+        self, product_data: CreateProduct, user_id: int
+    ) -> CreateProductResponse:
+        result = self.product_service.create_product(product_data, user_id)
+        return result
+
+    def get_products(self):
+        products = self.product_service.get_products()
+        return ResponseHelper.response_data(
+            data=products, message="Products retrieved successfully"
+        )
