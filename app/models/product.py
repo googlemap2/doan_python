@@ -58,6 +58,13 @@ class Product(Base):
             "created_by": self.created_by,
             "updated_by": self.updated_by,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "brand": self.brand.to_dict() if self.brand else None,
+            "created_by_user": (
+                self.created_by_user.to_dict() if self.created_by_user else None
+            ),
+            "updated_by_user": (
+                self.updated_by_user.to_dict() if self.updated_by_user else None
+            ),
         }
 
     def __repr__(self):

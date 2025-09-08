@@ -12,5 +12,11 @@ class Brand(Base):
 
     products = relationship("Product", back_populates="brand")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
+
     def __repr__(self):
         return f"<Brand(id={self.id}, name='{self.name}')>"

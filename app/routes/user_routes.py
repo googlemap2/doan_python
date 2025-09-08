@@ -1,5 +1,5 @@
 from urllib import response
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from fastapi.security import HTTPBearer
 
 from app.controllers.user_controller import UserController
@@ -29,14 +29,15 @@ def create_user(user_data: UserCreate):
 
 
 @router.get("/", response_model=GetUsersResponse)
-def get_users():
-    return user_controller.get_users()
-
-
-@router.get("/{username}", response_model=GetUserResponse)
-def get_user(username: str):
-    return user_controller.get_user(username)
-
+def get_users(
+    username: str | None = Query(None, description="Filter by username"),
+    phone: str | None = Query(None, description="Filter by phone number"),
+    address: str | None = Query(None, description="Filter by address"),
+    fullname: str | None = Query(None, description="Filter by full name"),
+):
+    return user_controller.get_users(
+        username=username, phone=phone, address=address, fullname=fullname
+    )
 
 @router.put("/{username}", response_model=GetUserResponse)
 def update_user(username: str, user_data: UserUpdate):

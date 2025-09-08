@@ -28,18 +28,18 @@ class UserController:
     def create_user(self, user_data: UserCreate) -> CreateUserResponse:
         return self.user_service.create_user(user_data)
 
-    def get_users(self) -> GetUsersResponse:
-        users = self.user_service.get_users()
+    def get_users(
+        self,
+        username: str | None = None,
+        phone: str | None = None,
+        address: str | None = None,
+        fullname: str | None = None,
+    ) -> GetUsersResponse:
+        users = self.user_service.get_users(
+            username=username, phone=phone, address=address, fullname=fullname
+        )
         return ResponseHelper.response_data(
             data=users, message="Users retrieved successfully"
-        )
-
-    def get_user(self, username: str) -> GetUserResponse:
-        user = self.user_service.get_user(username)
-        if not user:
-            return ResponseHelper.response_data(message="User not found", success=False)
-        return ResponseHelper.response_data(
-            data=user, message="User retrieved successfully"
         )
 
     def update_user(self, username: str, user_data) -> GetUserResponse:

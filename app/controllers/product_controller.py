@@ -2,6 +2,7 @@ from annotated_types import T
 from app.schemas.product_schema import (
     CreateProduct,
     CreateProductResponse,
+    GetProductsResponse,
 )
 from app.services.product_service import ProductService
 from app.config.database import SessionLocal
@@ -20,8 +21,14 @@ class ProductController:
         result = self.product_service.create_product(product_data, user_id)
         return result
 
-    def get_products(self):
-        products = self.product_service.get_products()
+    def get_products(
+        self,
+        name: str | None,
+        code: str | None,
+        color: str | None,
+        capacity: str | None,
+    ) -> GetProductsResponse:
+        products = self.product_service.get_products(name=name, code=code, color=color, capacity=capacity)
         return ResponseHelper.response_data(
             data=products, message="Products retrieved successfully"
         )

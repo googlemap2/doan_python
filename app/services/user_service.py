@@ -60,8 +60,23 @@ class UserService:
     def check_user_exists(self, username: str) -> bool:
         return self.db.query(User).filter(User.username == username).first() is not None
 
-    def get_users(self):
-        users = self.db.query(User).all()
+    def get_users(
+        self,
+        username: str | None = None,
+        phone: str | None = None,
+        address: str | None = None,
+        fullname: str | None = None,
+    ):
+        query = self.db.query(User)
+        if username:
+            query = query.filter(User.username == username)
+        if phone:
+            query = query.filter(User.phone == phone)
+        if address:
+            query = query.filter(User.address.ilike(f"%{address}%"))
+        if fullname:
+            query = query.filter(User.fullname.ilike(f"%{fullname}%"))
+        users = query.all()
         return [user.to_dict() for user in users]
 
     def get_user(self, username: str):

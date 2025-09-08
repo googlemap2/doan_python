@@ -49,6 +49,21 @@ class ProductService:
     def check_brand_exists(self, brand_id: int) -> bool:
         return self.db.query(Brand).filter(Brand.id == brand_id).first() is not None
 
-    def get_products(self):
-        products = self.db.query(Product).all()
-        return products
+    def get_products(
+        self,
+        name: str | None,
+        code: str | None,
+        color: str | None,
+        capacity: str | None,
+    ):
+        query = self.db.query(Product)
+        if name:
+            query = query.filter(Product.name.ilike(f"%{name}%"))
+        if code:
+            query = query.filter(Product.code == code)
+        if color:
+            query = query.filter(Product.color.ilike(f"%{color}%"))
+        if capacity:
+            query = query.filter(Product.capacity.ilike(f"%{capacity}%"))
+        products = query.all()
+        return [product.to_dict() for product in products]
