@@ -19,5 +19,24 @@ class User(Base):
     inventories = relationship("Inventory", back_populates="user")
     orders = relationship("Order", back_populates="user")
 
+    def to_dict(self, exclude_password: bool = True) -> dict:
+        """
+        Convert User object to dictionary, optionally excluding password
+        """
+        data = {
+            "id": self.id,
+            "username": self.username,
+            "fullname": self.fullname,
+            "phone": self.phone,
+            "address": self.address,
+            "created_at": self.created_at,
+            "is_active": self.is_active,
+        }
+
+        if not exclude_password:
+            data["password"] = self.password
+
+        return data
+
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', fullname='{self.fullname}')>"

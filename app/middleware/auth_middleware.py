@@ -33,16 +33,15 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             if method.upper() in [m.upper() for m in allowed_methods]:
                 return True
 
-        # Kiểm tra wildcard patterns (ví dụ: /api/public/*)
         for excluded_path in self.excluded_paths:
             if excluded_path.endswith("*"):
-                pattern = excluded_path[:-1]  # Bỏ dấu *
+                pattern = excluded_path[:-1]
                 if path.startswith(pattern):
                     return True
 
         for excluded_path, methods in self.excluded_paths_with_methods.items():
             if excluded_path.endswith("*"):
-                pattern = excluded_path[:-1]  # Bỏ dấu *
+                pattern = excluded_path[:-1]
                 if path.startswith(pattern) and method.upper() in [
                     m.upper() for m in methods
                 ]:
@@ -54,7 +53,6 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         path = request.url.path
         method = request.method
 
-        # Log cho debugging
         if LOG_AUTH_REQUESTS:
             logger.info(f"Auth check: {method} {path}")
 

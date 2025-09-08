@@ -8,8 +8,8 @@ class UserService:
     def __init__(self):
         self.db = SessionLocal()
 
-    def createUser(self, user_data: UserCreate) -> bool:
-        if self.checkUserExists(user_data.username):
+    def create_user(self, user_data: UserCreate) -> bool:
+        if self.check_user_exists(user_data.username):
             return False
         user_data.password = hash_password(user_data.password)
         new_user = User(
@@ -23,5 +23,9 @@ class UserService:
         self.db.commit()
         return True
 
-    def checkUserExists(self, username: str) -> bool:
+    def check_user_exists(self, username: str) -> bool:
         return self.db.query(User).filter(User.username == username).first() is not None
+
+    def get_users(self):
+        users = self.db.query(User).all()
+        return users

@@ -9,7 +9,8 @@ EXCLUDED_PATHS = {
 
 EXCLUDED_PATHS_WITH_METHODS = {
     "/user/login": ["POST"],
-    "/user/register": ["POST"],
+    "/user": ["POST"],
+    "/user/": ["POST"],
 }
 
 ENABLE_AUTH_MIDDLEWARE = True

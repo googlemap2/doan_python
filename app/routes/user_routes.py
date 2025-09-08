@@ -18,3 +18,9 @@ def login_user(user_data: UserLogin):
 def create_user(user_data: UserCreate):
     controller = UserController()
     return controller.create_user(user_data)
+
+
+@router.get("/")
+def get_users():
+    controller = UserController()
+    return controller.get_users()

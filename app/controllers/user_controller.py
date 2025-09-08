@@ -36,6 +36,12 @@ class UserController:
         )
 
     def create_user(self, user_data: UserCreate):
-        if self.user_service.createUser(user_data):
-            return {"success": True, "message": "User created successfully"}
-        return {"success": False, "message": "User creation failed"}
+        if self.user_service.create_user(user_data):
+            return ResponseHelper.success(message="User created successfully")
+        return ResponseHelper.success(message="User creation failed", success=False)
+
+    def get_users(self):
+        users = self.user_service.get_users()
+        return ResponseHelper.success(
+            data=users, message="Users retrieved successfully"
+        )
