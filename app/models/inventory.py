@@ -23,7 +23,7 @@ class Inventory(Base):
     quantity_in = Column(Integer, nullable=False)
     price = Column(BigInteger, nullable=False)
     created_at = Column(DateTime, server_default=func.current_timestamp())
-    user_id = Column(Integer, ForeignKey("users.id"))
+    created_by = Column(Integer, ForeignKey("users.id"))
 
     __table_args__ = (
         CheckConstraint("quantity >= 0", name="check_quantity_positive"),
@@ -31,7 +31,7 @@ class Inventory(Base):
     )
 
     product = relationship("Product", back_populates="inventories")
-    user = relationship("User", back_populates="inventories")
+    created_by_user = relationship("User", back_populates="inventories")
     order_item_inventories = relationship(
         "OrderItemInventory", back_populates="inventory"
     )

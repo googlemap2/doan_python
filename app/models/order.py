@@ -10,11 +10,11 @@ class Order(Base):
     id = Column(Integer, primary_key=True)
     code = Column(String)
     customer_id = Column(Integer, ForeignKey("customers.id"))
-    order_date = Column(DateTime, server_default=func.current_timestamp())
-    user_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime, server_default=func.current_timestamp())
+    created_by = Column(Integer, ForeignKey("users.id"))
 
     customer = relationship("Customer", back_populates="orders")
-    user = relationship("User", back_populates="orders")
+    created_by_user = relationship("User", back_populates="orders")
     order_items = relationship("OrderItem", back_populates="order")
 
     def __repr__(self):

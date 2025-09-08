@@ -15,30 +15,30 @@ from app.schemas.user_schema import (
 
 router = APIRouter(prefix="/user", tags=["user"])
 security = HTTPBearer()
-controller = UserController()
+user_controller = UserController()
 
 
 @router.post("/login", response_model=TokenResponse)
 def login_user(user_data: UserLogin):
-    return controller.login_user(user_data)
+    return user_controller.login_user(user_data)
 
 
 @router.post("/", response_model=CreateUserResponse)
 def create_user(user_data: UserCreate):
-    return controller.create_user(user_data)
+    return user_controller.create_user(user_data)
     return controller.create_user(user_data)
 
 
 @router.get("/", response_model=GetUsersResponse)
 def get_users():
-    return controller.get_users()
+    return user_controller.get_users()
 
 
 @router.get("/{username}", response_model=GetUserResponse)
 def get_user(username: str):
-    return controller.get_user(username)
+    return user_controller.get_user(username)
 
 
 @router.put("/{username}", response_model=GetUserResponse)
 def update_user(username: str, user_data: UserUpdate):
-    return controller.update_user(username, user_data)
+    return user_controller.update_user(username, user_data)

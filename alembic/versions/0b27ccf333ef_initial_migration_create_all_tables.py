@@ -56,19 +56,19 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("code", sa.String(), nullable=True),
         sa.Column("customer_id", sa.Integer(), nullable=True),
+        sa.Column("created_by", sa.Integer(), nullable=False),
         sa.Column(
-            "order_date",
+            "created_at",
             sa.DateTime(),
             server_default=sa.text("CURRENT_TIMESTAMP"),
             nullable=True,
         ),
-        sa.Column("user_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["customer_id"],
             ["customers.id"],
         ),
         sa.ForeignKeyConstraint(
-            ["user_id"],
+            ["created_by"],
             ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
@@ -85,6 +85,9 @@ def upgrade() -> None:
         sa.Column("image_url", sa.Text(), nullable=True),
         sa.Column("color", sa.String(length=50), nullable=False),
         sa.Column("capacity", sa.String(length=50), nullable=False),
+        sa.Column("is_active", sa.Boolean(), default=True),
+        sa.Column("created_by", sa.Integer(), nullable=False),
+        sa.Column("updated_by", sa.Integer(), nullable=False),
         sa.Column(
             "created_at",
             sa.DateTime(),
@@ -94,6 +97,14 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["brand_id"],
             ["brands.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["created_by"],
+            ["users.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["updated_by"],
+            ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("code"),
@@ -112,7 +123,7 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
             nullable=True,
         ),
-        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("created_by", sa.Integer(), nullable=False),
         sa.CheckConstraint("quantity >= 0", name="check_quantity_positive"),
         sa.CheckConstraint("quantity_in >= 0", name="check_quantity_in_positive"),
         sa.ForeignKeyConstraint(
@@ -120,7 +131,7 @@ def upgrade() -> None:
             ["products.id"],
         ),
         sa.ForeignKeyConstraint(
-            ["user_id"],
+            ["created_by"],
             ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),

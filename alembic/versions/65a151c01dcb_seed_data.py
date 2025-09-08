@@ -54,7 +54,6 @@ def upgrade() -> None:
         users_table,
         [
             {
-                "id": 1,
                 "username": "admin",
                 "fullname": "Administrator",
                 "phone": "0987565139",

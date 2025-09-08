@@ -16,8 +16,8 @@ class User(Base):
     created_at = Column(DateTime, server_default=func.now())
     is_active = Column(Boolean, default=True)
 
-    inventories = relationship("Inventory", back_populates="user")
-    orders = relationship("Order", back_populates="user")
+    inventories = relationship("Inventory", back_populates="created_by_user")
+    orders = relationship("Order", back_populates="created_by_user")
 
     def to_dict(self, exclude_password: bool = True) -> dict:
         data = {
