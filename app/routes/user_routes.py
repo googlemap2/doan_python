@@ -1,26 +1,44 @@
+from urllib import response
 from fastapi import APIRouter
 from fastapi.security import HTTPBearer
 
 from app.controllers.user_controller import UserController
-from app.schemas.user_schema import TokenResponse, UserCreate, UserLogin
+from app.schemas.user_schema import (
+    CreateUserResponse,
+    GetUserResponse,
+    GetUsersResponse,
+    TokenResponse,
+    UserCreate,
+    UserLogin,
+    UserUpdate,
+)
 
 router = APIRouter(prefix="/user", tags=["user"])
 security = HTTPBearer()
+controller = UserController()
 
 
 @router.post("/login", response_model=TokenResponse)
 def login_user(user_data: UserLogin):
-    controller = UserController()
     return controller.login_user(user_data)
 
 
-@router.post("/")
+@router.post("/", response_model=CreateUserResponse)
 def create_user(user_data: UserCreate):
-    controller = UserController()
+    return controller.create_user(user_data)
     return controller.create_user(user_data)
 
 
-@router.get("/")
+@router.get("/", response_model=GetUsersResponse)
 def get_users():
-    controller = UserController()
     return controller.get_users()
+
+
+@router.get("/{username}", response_model=GetUserResponse)
+def get_user(username: str):
+    return controller.get_user(username)
+
+
+@router.put("/{username}", response_model=GetUserResponse)
+def update_user(username: str, user_data: UserUpdate):
+    return controller.update_user(username, user_data)

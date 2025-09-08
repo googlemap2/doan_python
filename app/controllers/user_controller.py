@@ -1,7 +1,14 @@
 from fastapi import HTTPException, status
 from app.models import user
 from app.models.user import User
-from app.schemas.user_schema import TokenResponse, UserCreate, UserLogin
+from app.schemas.user_schema import (
+    CreateUserResponse,
+    GetUserResponse,
+    GetUsersResponse,
+    TokenResponse,
+    UserCreate,
+    UserLogin,
+)
 from app.utils.auth import create_access_token, verify_password
 from app.config.database import SessionLocal
 from app.utils.auth import get_password_hash as hash_password
@@ -35,15 +42,31 @@ class UserController:
             message="Login successful",
         )
 
-    def create_user(self, user_data: UserCreate):
+    def create_user(self, user_data: UserCreate) -> CreateUserResponse:
         if self.user_service.create_user(user_data):
             return ResponseHelper.response_data(message="User created successfully")
         return ResponseHelper.response_data(
             message="User creation failed", success=False
         )
 
-    def get_users(self):
+    def get_users(self) -> GetUsersResponse:
         users = self.user_service.get_users()
         return ResponseHelper.response_data(
             data=users, message="Users retrieved successfully"
+        )
+
+    def get_user(self, username: str) -> GetUserResponse:
+        user = self.user_service.get_user(username)
+        if not user:
+            return ResponseHelper.response_data(message="User not found", success=False)
+        return ResponseHelper.response_data(
+            data=user, message="User retrieved successfully"
+        )
+
+    def update_user(self, username: str, user_data) -> GetUserResponse:
+        user = self.user_service.update_user(username, user_data)
+        if not user:
+            return ResponseHelper.response_data(message="User not found", success=False)
+        return ResponseHelper.response_data(
+            data=user, message="User updated successfully"
         )

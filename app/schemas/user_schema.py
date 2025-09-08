@@ -5,8 +5,6 @@ from datetime import datetime
 from app.schemas.base_schema import ResponseType
 
 
-
-
 class UserBase(BaseModel):
     username: str
     fullname: Optional[str] = None
@@ -30,7 +28,6 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: Optional[str] = None
     fullname: Optional[str] = None
     phone: Optional[str] = None
     address: Optional[str] = None
@@ -51,15 +48,7 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-# Alias cho backward compatibility
 User = UserResponse
-
-
-class UserList(BaseModel):
-    users: list[UserResponse]
-    total: int
-    page: int
-    size: int
 
 
 class Token(BaseModel):
@@ -67,9 +56,21 @@ class Token(BaseModel):
     token_type: str
 
 
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
+
 class TokenResponse(ResponseType[Token]):
     pass
 
 
-class TokenData(BaseModel):
-    username: Optional[str] = None
+class CreateUserResponse(ResponseType[None]):
+    pass
+
+
+class GetUsersResponse(ResponseType[list[UserResponse]]):
+    pass
+
+
+class GetUserResponse(ResponseType[UserResponse]):
+    pass

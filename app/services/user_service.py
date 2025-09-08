@@ -29,3 +29,27 @@ class UserService:
     def get_users(self):
         users = self.db.query(User).all()
         return [user.to_dict() for user in users]
+      
+    def get_user(self, username: str):
+        user = self.db.query(User).filter(User.username == username).first()
+        if user:
+            return user.to_dict()
+        return None
+
+
+    def update_user(self, username: str, user_data):
+        user = self.db.query(User).filter(User.username == username).first()
+        if not user:
+            return False
+        if user_data.fullname is not None:
+            user.fullname = user_data.fullname
+        if user_data.phone is not None:
+            user.phone = user_data.phone
+        if user_data.address is not None:
+            user.address = user_data.address
+        if user_data.is_active is not None:
+            user.is_active = user_data.is_active
+        if user_data.password is not None:
+            user.password = hash_password(user_data.password)
+        self.db.commit()
+        return user.to_dict()
