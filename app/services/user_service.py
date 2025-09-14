@@ -8,6 +8,7 @@ from app.schemas.user_schema import (
     TokenResponse,
     UserCreate,
     UserLogin,
+    GetUsersResponse
 )
 from app.utils.auth import (
     create_access_token,
@@ -67,7 +68,7 @@ class UserService:
         phone: str | None = None,
         address: str | None = None,
         fullname: str | None = None,
-    ):
+    )-> GetUsersResponse:
         query = self.db.query(User)
         if username:
             query = query.filter(User.username == username)
@@ -78,16 +79,22 @@ class UserService:
         if fullname:
             query = query.filter(User.fullname.ilike(f"%{fullname}%"))
         users = query.all()
-        return [user.to_dict() for user in users]
+        return ResponseHelper.response_data(
+            success=True, message="Users retrieved successfully", data=[user.to_dict() for user in users]
+        )
 
-    def get_user(self, username: str):
-        user = self.db.query(User).filter(User.username == username).first()
+    def get_user(self, id: int) -> GetUserResponse:
+        user = self.db.query(User).filter(User.id == id).first()
         if user:
-            return user.to_dict()
-        return None
+            return ResponseHelper.response_data(
+                success=True, message="User retrieved successfully", data=user.to_dict()
+            )
+        return ResponseHelper.response_data(
+            success=False, message="User not found"
+        )   
 
-    def update_user(self, username: str, user_data) -> GetUserResponse:
-        user = self.db.query(User).filter(User.username == username).first()
+    def update_user(self, id: int, user_data) -> GetUserResponse:
+        user = self.db.query(User).filter(User.id == id).first()
         if not user:
             return ResponseHelper.response_data(message="User not found", success=False)
         if user_data.fullname is not None:
@@ -105,13 +112,13 @@ class UserService:
             data=user.to_dict(), message="User updated successfully"
         )
 
-    def delete_user(self, username: str) -> GetUserResponse:
-        user = self.db.query(User).filter(User.username == username).first()
+    def delete_user(self, id: int) -> GetUserResponse:
+        user = self.db.query(User).filter(User.id == id).first()
         if not user:
             return ResponseHelper.response_data(message="User not found", success=False)
         user.deleted_at = datetime.now()
         user.is_active = False
         self.db.commit()
         return ResponseHelper.response_data(
-            data=user.to_dict(), message="Delete successful"
+            data=user.to_dict(), message="Delete successed"
         )

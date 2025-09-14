@@ -62,3 +62,6 @@ class UpdateProductResponse(ResponseType[Product]):
 
 class GetProductsResponse(ResponseType[list[Product]]):
     pass
+
+class GetProductResponse(ResponseType[Product]):
+    pass

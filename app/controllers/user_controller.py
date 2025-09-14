@@ -38,12 +38,13 @@ class UserController:
         users = self.user_service.get_users(
             username=username, phone=phone, address=address, fullname=fullname
         )
-        return ResponseHelper.response_data(
-            data=users, message="Users retrieved successfully"
-        )
+        return users
 
-    def update_user(self, username: str, user_data) -> GetUserResponse:
-        return self.user_service.update_user(username, user_data)
+    def get_user(self, id: int) -> GetUserResponse:
+        return self.user_service.get_user(id)
 
-    def delete_user(self, username: str) -> GetUserResponse:
-        return self.user_service.delete_user(username)
+    def update_user(self, id: int, user_data) -> GetUserResponse:
+        return self.user_service.update_user(id, user_data)
+
+    def delete_user(self, id: int) -> GetUserResponse:
+        return self.user_service.delete_user(id)

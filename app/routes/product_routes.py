@@ -11,6 +11,7 @@ from app.schemas.product_schema import (
     GetProductsResponse,
     UpdateProduct,
     UpdateProductResponse,
+    GetProductResponse,
 )
 
 
@@ -28,6 +29,11 @@ def create_product(
     user_id = getattr(request.state, "user_id", None)
     return product_controller.create_product(product_data, user_id)
 
+
+@router.get("/{product_id}", response_model=GetProductResponse)
+def get_product(product_id: int):
+    """Lấy thông tin sản phẩm theo ID"""
+    return product_controller.get_product(product_id)
 
 @router.get("/", response_model=GetProductsResponse)
 def get_products(

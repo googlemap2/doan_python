@@ -7,9 +7,12 @@ from app.schemas.product_schema import (
     CreateProductResponse,
     UpdateProductResponse,
     UpdateProduct,
+    GetProductResponse,
+    GetProductsResponse
 )
 from app.utils.helpers import ResponseHelper
 from datetime import datetime
+
 
 class ProductService:
     def __init__(self):
@@ -51,13 +54,23 @@ class ProductService:
     def check_brand_exists(self, brand_id: int) -> bool:
         return self.db.query(Brand).filter(Brand.id == brand_id).first() is not None
 
+    def get_product_by_id(self, product_id: int) -> GetProductResponse:
+        product = self.db.query(Product).filter(Product.id == product_id).first()
+        if product:
+            return ResponseHelper.response_data(
+                success=True, message="Product retrieved successfully", data=product.to_dict()
+            )
+        return ResponseHelper.response_data(
+            success=False, message="Product not found"
+        )
+
     def get_products(
         self,
         name: str | None,
         code: str | None,
         color: str | None,
         capacity: str | None,
-    ):
+    ) -> GetProductsResponse:
         query = self.db.query(Product)
         if name:
             query = query.filter(Product.name.ilike(f"%{name}%"))
@@ -68,7 +81,9 @@ class ProductService:
         if capacity:
             query = query.filter(Product.capacity.ilike(f"%{capacity}%"))
         products = query.all()
-        return [product.to_dict() for product in products]
+        return ResponseHelper.response_data(
+            success=True, message="Products retrieved successfully", data=[product.to_dict() for product in products]
+        )
 
     def update_product(self, product_id: int, product_data: UpdateProduct, user_id: int) -> UpdateProductResponse:
         product = self.db.query(Product).filter(Product.id == product_id).first()

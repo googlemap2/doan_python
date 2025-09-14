@@ -5,6 +5,7 @@ from app.schemas.product_schema import (
     GetProductsResponse,
     UpdateProductResponse,
     UpdateProduct,
+    GetProductResponse
 )
 from app.services.product_service import ProductService
 from app.config.database import SessionLocal
@@ -31,9 +32,11 @@ class ProductController:
         capacity: str | None,
     ) -> GetProductsResponse:
         products = self.product_service.get_products(name=name, code=code, color=color, capacity=capacity)
-        return ResponseHelper.response_data(
-            data=products, message="Products retrieved successfully"
-        )
+        return products
+    
+    def get_product(self, product_id: int) -> GetProductResponse:
+        product = self.product_service.get_product_by_id(product_id)
+        return product  
 
     def update_product(self, product_id: int, product_data: UpdateProduct, user_id: int) -> UpdateProductResponse:
         updated_product = self.product_service.update_product(product_id, product_data, user_id)
