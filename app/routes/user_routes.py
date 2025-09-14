@@ -42,3 +42,7 @@ def get_users(
 @router.put("/{username}", response_model=GetUserResponse)
 def update_user(username: str, user_data: UserUpdate):
     return user_controller.update_user(username, user_data)
+
+@router.delete("/{username}", response_model=GetUserResponse)
+def delete_user(username: str):
+    return user_controller.delete_user(username)

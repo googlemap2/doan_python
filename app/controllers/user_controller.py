@@ -44,3 +44,6 @@ class UserController:
 
     def update_user(self, username: str, user_data) -> GetUserResponse:
         return self.user_service.update_user(username, user_data)
+
+    def delete_user(self, username: str) -> GetUserResponse:
+        return self.user_service.delete_user(username)

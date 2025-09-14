@@ -123,7 +123,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                         },
                     )
 
-                if user.is_active is not True:
+                if user.is_active is not True or user.deleted_at is not None:
                     if LOG_AUTH_REQUESTS:
                         logger.warning(f"Inactive user attempted access: {username}")
                     return JSONResponse(

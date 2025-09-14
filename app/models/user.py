@@ -14,6 +14,7 @@ class User(Base):
     address = Column(String(50), nullable=True)
     password = Column(String(255), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
+    deleted_at = Column(DateTime, nullable=True)
     is_active = Column(Boolean, default=True)
 
     inventories = relationship("Inventory", back_populates="created_by_user")
@@ -27,6 +28,7 @@ class User(Base):
             "phone": self.phone,
             "address": self.address,
             "created_at": self.created_at,
+            "deleted_at": self.deleted_at,
             "is_active": self.is_active,
         }
 

@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import HTTPException, status
 from app.config.database import SessionLocal
 from app.models.user import User
@@ -102,4 +103,15 @@ class UserService:
         self.db.commit()
         return ResponseHelper.response_data(
             data=user.to_dict(), message="User updated successfully"
+        )
+
+    def delete_user(self, username: str) -> GetUserResponse:
+        user = self.db.query(User).filter(User.username == username).first()
+        if not user:
+            return ResponseHelper.response_data(message="User not found", success=False)
+        user.deleted_at = datetime.now()
+        user.is_active = False
+        self.db.commit()
+        return ResponseHelper.response_data(
+            data=user.to_dict(), message="Delete successful"
         )

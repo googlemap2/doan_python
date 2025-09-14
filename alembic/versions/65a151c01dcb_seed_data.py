@@ -58,7 +58,7 @@ def upgrade() -> None:
                 "fullname": "Administrator",
                 "phone": "0987565139",
                 "address": "ĐH UIT",
-                "password": "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewKyNiCdPu3eZxwa",
+                "password": "$2b$12$Ehes59rm6/qHEeNLe.8QRu/mH3K3SH96Lu.E0pvMp.o1axjQdKAqq",
                 "created_at": datetime.now(),
                 "is_active": 1,
             },

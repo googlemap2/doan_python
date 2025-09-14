@@ -25,10 +25,6 @@ python -m venv .venv
 # Windows CMD
 .venv\Scripts\activate.bat
 
-# Linux/Mac
-source .venv/bin/activate
-```
-
 ### 2. Cài đặt dependencies
 ```bash
 pip install -r requirements.txt

@@ -44,6 +44,7 @@ def upgrade() -> None:
         sa.Column("phone", sa.String(length=50), nullable=False),
         sa.Column("address", sa.String(length=50), nullable=True),
         sa.Column("password", sa.String(length=255), nullable=False),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
@@ -88,6 +89,7 @@ def upgrade() -> None:
         sa.Column("is_active", sa.Boolean(), default=True),
         sa.Column("created_by", sa.Integer(), nullable=False),
         sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
         sa.Column(
             "created_at",
             sa.DateTime(),
