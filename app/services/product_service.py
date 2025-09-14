@@ -104,3 +104,6 @@ class ProductService:
         return ResponseHelper.response_data(
             success=True, message="Product updated successfully", data=product.to_dict()
         )
+    
+    def check_product_exists(self, product_id: int) -> bool:
+        return self.db.query(Product).filter(Product.id == product_id).first() is not None

@@ -36,5 +36,17 @@ class Inventory(Base):
         "OrderItemInventory", back_populates="inventory"
     )
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "product_id": self.product_id,
+            "quantity": self.quantity,
+            "supplier": self.supplier,
+            "price": self.price,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "created_by": self.created_by,
+            "product": self.product.to_dict() if self.product else None,
+        }
+
     def __repr__(self):
         return f"<Inventory(id={self.id}, product_id={self.product_id}, quantity={self.quantity})>"
