@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from app.schemas.base_schema import ResponseType
 from app.schemas.brand_schema import Brand
-from app.schemas.user_schema import UserBase
+from app.schemas.user_schema import User
 
 
 class CreateProduct(BaseModel):
@@ -49,8 +49,8 @@ class Product(BaseModel):
     created_by: int
     updated_by: Optional[int] = None
     brand: Brand
-    created_by_user: Optional[UserBase] = None
-    updated_by_user: Optional[UserBase] = None
+    created_by_user: User
+    updated_by_user: Optional[User] = None
 
 
 class CreateProductResponse(ResponseType[Product]):

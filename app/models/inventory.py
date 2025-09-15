@@ -46,7 +46,13 @@ class Inventory(Base):
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "created_by": self.created_by,
             "product": self.product.to_dict() if self.product else None,
+            "created_by_user": self.created_by_user.to_dict() if self.created_by_user else None,
+            "total_price": self.total_price,
         }
+
+    @property
+    def total_price(self):
+        return self.quantity * self.price
 
     def __repr__(self):
         return f"<Inventory(id={self.id}, product_id={self.product_id}, quantity={self.quantity})>"

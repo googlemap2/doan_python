@@ -5,7 +5,7 @@ from datetime import datetime
 from app.schemas.base_schema import ResponseType
 
 
-class UserBase(BaseModel):
+class User(BaseModel):
     username: str
     fullname: Optional[str] = None
     phone: Optional[str] = None
@@ -46,9 +46,6 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-User = UserResponse
 
 
 class Token(BaseModel):

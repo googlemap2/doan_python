@@ -3,10 +3,15 @@ from app.config.database import SessionLocal
 from app.utils.helpers import ResponseHelper
 from app.schemas.inventory_schema import (
     ImportWarehouse, 
-    ImportWarehouseResponse
+    ImportWarehouseResponse,
+    GetInventoryProductResponse,
+    GetInventoriesResponse,
+    GetInventoryResponse,
+    UpdateInventory,
 )
 from app.services.product_service import ProductService
 from app.models import Inventory
+from app.models.product import Product
 
 class InventoryService:
     def __init__(self):
@@ -31,3 +36,45 @@ class InventoryService:
         self.db.commit()
         return ResponseHelper.response_data(data=inventory.to_dict(), message="Inventory imported successfully")
 
+    def get_inventory_by_product(self, product_id: int)-> GetInventoryProductResponse:
+        inventory = self.db.query(Inventory).filter(Inventory.product_id == product_id).all()
+        if not inventory:
+            return ResponseHelper.response_data(
+                success=False, message="No inventory found for this product"
+            )
+        result = {
+            "product_id": product_id,
+            "quantity_in": sum(item.quantity_in for item in inventory),
+            "total_quantity": sum(item.quantity for item in inventory),
+            "product": inventory[0].product.to_dict() if inventory else None,
+        }
+        return ResponseHelper.response_data(data=result, message="Inventory fetched successfully")
+
+    def get_inventories(self, product_name: str | None = None) -> GetInventoriesResponse:
+        query = self.db.query(Inventory)
+        if product_name:
+            query = query.join(Inventory.product).filter(Product.name.ilike(f"%{product_name}%"))
+        inventories = query.all()
+        return ResponseHelper.response_data(
+            success=True, message="Inventories retrieved successfully", data=[inventory.to_dict() for inventory in inventories]
+        )
+    
+    def get_inventory(self, id: int) -> GetInventoryResponse:
+        inventory = self.db.query(Inventory).filter(Inventory.id == id).first()
+        if not inventory:
+            return ResponseHelper.response_data(
+                success=False, message="Inventory not found"
+            )
+        return ResponseHelper.response_data(data=inventory.to_dict(), message="Inventory fetched successfully")
+
+    def update_inventory(self, id: int, inventory_data: UpdateInventory) -> GetInventoryResponse:
+        inventory = self.db.query(Inventory).filter(Inventory.id == id).first()
+        if not inventory:
+            return ResponseHelper.response_data(
+                success=False, message="Inventory not found"
+            )
+        inventory.quantity = inventory_data.quantity
+        inventory.supplier = inventory_data.supplier
+        inventory.price = inventory_data.price
+        self.db.commit()
+        return ResponseHelper.response_data(data=inventory.to_dict(), message="Inventory updated successfully")
