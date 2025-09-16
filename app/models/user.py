@@ -15,6 +15,10 @@ class User(Base):
     password = Column(String(255), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     deleted_at = Column(DateTime, nullable=True)
+    updated_at = Column(DateTime, nullable=True)
+    updated_by = Column(Integer, nullable=True)
+    deleted_by = Column(Integer, nullable=True)
+    created_by = Column(Integer, nullable=True)
     is_active = Column(Boolean, default=True)
 
     inventories = relationship("Inventory", back_populates="created_by_user")

@@ -8,7 +8,7 @@ from app.schemas.product_schema import (
     UpdateProductResponse,
     UpdateProduct,
     GetProductResponse,
-    GetProductsResponse
+    GetProductsResponse,
 )
 from app.utils.helpers import ResponseHelper
 from datetime import datetime
@@ -58,11 +58,11 @@ class ProductService:
         product = self.db.query(Product).filter(Product.id == product_id).first()
         if product:
             return ResponseHelper.response_data(
-                success=True, message="Product retrieved successfully", data=product.to_dict()
+                success=True,
+                message="Product retrieved successfully",
+                data=product.to_dict(),
             )
-        return ResponseHelper.response_data(
-            success=False, message="Product not found"
-        )
+        return ResponseHelper.response_data(success=False, message="Product not found")
 
     def get_products(
         self,
@@ -72,6 +72,7 @@ class ProductService:
         capacity: str | None,
     ) -> GetProductsResponse:
         query = self.db.query(Product)
+        query = query.filter(Product.deleted_at == None)
         if name:
             query = query.filter(Product.name.ilike(f"%{name}%"))
         if code:
@@ -82,10 +83,14 @@ class ProductService:
             query = query.filter(Product.capacity.ilike(f"%{capacity}%"))
         products = query.all()
         return ResponseHelper.response_data(
-            success=True, message="Products retrieved successfully", data=[product.to_dict() for product in products]
+            success=True,
+            message="Products retrieved successfully",
+            data=[product.to_dict() for product in products],
         )
 
-    def update_product(self, product_id: int, product_data: UpdateProduct, user_id: int) -> UpdateProductResponse:
+    def update_product(
+        self, product_id: int, product_data: UpdateProduct, user_id: int
+    ) -> UpdateProductResponse:
         product = self.db.query(Product).filter(Product.id == product_id).first()
         if not product:
             return ResponseHelper.response_data(
@@ -119,6 +124,24 @@ class ProductService:
         return ResponseHelper.response_data(
             success=True, message="Product updated successfully", data=product.to_dict()
         )
-    
+
     def check_product_exists(self, product_id: int) -> bool:
-        return self.db.query(Product).filter(Product.id == product_id).first() is not None
+        return (
+            self.db.query(Product).filter(Product.id == product_id).first() is not None
+        )
+
+    def delete_product(self, product_id: int, user_id: int) -> UpdateProductResponse:
+        product = self.db.query(Product).filter(Product.id == product_id).first()
+        if not product:
+            return ResponseHelper.response_data(
+                success=False, message="Product not found"
+            )
+        product.is_active = False
+        product.updated_by = user_id
+        product.updated_at = datetime.now()
+        product.deleted_at = datetime.now()
+        product.deleted_by = user_id
+        self.db.commit()
+        return ResponseHelper.response_data(
+            success=True, message="Product deleted successfully", data=product.to_dict()
+        )

@@ -48,9 +48,11 @@ class Product(BaseModel):
     updated_at: Optional[str] = None
     created_by: int
     updated_by: Optional[int] = None
+    deleted_by: Optional[int] = None
     brand: Brand
     created_by_user: User
     updated_by_user: Optional[User] = None
+    deleted_by_user: Optional[User] = None
 
 
 class CreateProductResponse(ResponseType[Product]):

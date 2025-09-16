@@ -44,13 +44,29 @@ def upgrade() -> None:
         sa.Column("phone", sa.String(length=50), nullable=False),
         sa.Column("address", sa.String(length=50), nullable=True),
         sa.Column("password", sa.String(length=255), nullable=False),
+        sa.Column("deleted_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("created_by", sa.Integer(), nullable=True),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True
         ),
         sa.Column("is_active", sa.Boolean(), default=True),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("username"),
+        sa.ForeignKeyConstraint(
+            ["deleted_by"],
+            ["users.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["updated_by"],
+            ["users.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["created_by"],
+            ["users.id"],
+        ),
     )
     op.create_table(
         "orders",
@@ -89,14 +105,15 @@ def upgrade() -> None:
         sa.Column("is_active", sa.Boolean(), default=True),
         sa.Column("created_by", sa.Integer(), nullable=False),
         sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("deleted_by", sa.Integer(), nullable=True),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.Column(
             "created_at",
             sa.DateTime(),
             server_default=sa.text("CURRENT_TIMESTAMP"),
             nullable=True,
         ),
-        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.ForeignKeyConstraint(
             ["brand_id"],
             ["brands.id"],
@@ -107,6 +124,10 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(
             ["updated_by"],
+            ["users.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["deleted_by"],
             ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
@@ -126,7 +147,11 @@ def upgrade() -> None:
             server_default=sa.text("CURRENT_TIMESTAMP"),
             nullable=True,
         ),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.Column("deleted_by", sa.Integer(), nullable=False),
         sa.Column("created_by", sa.Integer(), nullable=False),
+        sa.Column("updated_by", sa.Integer(), nullable=False),
         sa.CheckConstraint("quantity >= 0", name="check_quantity_positive"),
         sa.CheckConstraint("quantity_in >= 0", name="check_quantity_in_positive"),
         sa.ForeignKeyConstraint(
@@ -135,6 +160,14 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(
             ["created_by"],
+            ["users.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["deleted_by"],
+            ["users.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["updated_by"],
             ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),

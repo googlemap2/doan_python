@@ -39,3 +39,7 @@ class InventoryController:
     def update_inventory(self, id: int, inventory_data) -> GetInventoryResponse:
         inventory = self.inventory_service.update_inventory(id, inventory_data)
         return inventory
+
+    def delete_inventory(self, id: int, user_id: int) -> GetInventoryResponse:
+        inventory = self.inventory_service.delete_inventory(id, user_id)
+        return inventory

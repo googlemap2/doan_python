@@ -41,3 +41,7 @@ class ProductController:
     def update_product(self, product_id: int, product_data: UpdateProduct, user_id: int) -> UpdateProductResponse:
         updated_product = self.product_service.update_product(product_id, product_data, user_id)
         return updated_product
+
+    def delete_product(self, product_id: int, user_id: int) -> UpdateProductResponse:
+        deleted_product = self.product_service.delete_product(product_id, user_id)
+        return deleted_product

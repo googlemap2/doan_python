@@ -105,3 +105,21 @@ class InventoryService:
         return ResponseHelper.response_data(
             data=inventory.to_dict(), message="Inventory updated successfully"
         )
+
+    def delete_inventory(self, id: int, user_id: int) -> GetInventoryResponse:
+        inventory = self.db.query(Inventory).filter(Inventory.id == id).first()
+        if not inventory:
+            return ResponseHelper.response_data(
+                success=False, message="Inventory not found"
+            )
+        if inventory.quantity != inventory.quantity_in:
+            return ResponseHelper.response_data(
+                success=False,
+                message="Cannot delete inventory that has been partially used",
+            )
+        inventory.deleted_at = datetime.now()
+        inventory.deleted_by = user_id
+        self.db.commit()
+        return ResponseHelper.response_data(
+            data=inventory.to_dict(), message="Inventory deleted successfully"
+        )

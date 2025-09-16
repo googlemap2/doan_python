@@ -52,3 +52,9 @@ def update_product(product_id: int, product_data: UpdateProduct, request: Reques
     """Cập nhật thông tin sản phẩm"""
     user_id = getattr(request.state, "user_id", None)
     return product_controller.update_product(product_id, product_data, user_id)
+
+@router.delete("/{product_id}", response_model=UpdateProductResponse)
+def delete_product(product_id: int, request: Request):
+    """Xóa sản phẩm"""
+    user_id = getattr(request.state, "user_id", None)
+    return product_controller.delete_product(product_id, user_id)

@@ -7,6 +7,7 @@ from sqlalchemy import (
     BigInteger,
     DateTime,
     ForeignKey,
+    delete,
     func,
 )
 from sqlalchemy.orm import relationship
@@ -31,15 +32,19 @@ class Product(Base):
     is_active = Column(Boolean, default=False)
     created_at = Column(DateTime, server_default=func.current_timestamp())
     updated_at = Column(DateTime, onupdate=func.current_timestamp())
+    deleted_at = Column(DateTime, nullable=True)
 
     created_by = Column(Integer, ForeignKey("users.id"))
     updated_by = Column(Integer, ForeignKey("users.id"))
+    deleted_by = Column(Integer, ForeignKey("users.id"))
 
     brand = relationship("Brand", back_populates="products")
     inventories = relationship("Inventory", back_populates="product")
     order_items = relationship("OrderItem", back_populates="product")
+
     created_by_user = relationship("User", foreign_keys=[created_by])
     updated_by_user = relationship("User", foreign_keys=[updated_by])
+    deleted_by_user = relationship("User", foreign_keys=[deleted_by])
 
     def to_dict(self):
         return {
@@ -57,13 +62,18 @@ class Product(Base):
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "created_by": self.created_by,
             "updated_by": self.updated_by,
+            "deleted_by": self.deleted_by,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None,
             "brand": self.brand.to_dict() if self.brand else None,
             "created_by_user": (
                 self.created_by_user.to_dict() if self.created_by_user else None
             ),
             "updated_by_user": (
                 self.updated_by_user.to_dict() if self.updated_by_user else None
+            ),
+            "deleted_by_user": (
+                self.deleted_by_user.to_dict() if self.deleted_by_user else None
             ),
         }
 

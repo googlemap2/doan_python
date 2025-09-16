@@ -43,8 +43,8 @@ class UserController:
     def get_user(self, id: int) -> GetUserResponse:
         return self.user_service.get_user(id)
 
-    def update_user(self, id: int, user_data) -> GetUserResponse:
-        return self.user_service.update_user(id, user_data)
+    def update_user(self, id: int, user_data, user_id: int) -> GetUserResponse:
+        return self.user_service.update_user(id, user_data, user_id=user_id)
 
-    def delete_user(self, id: int) -> GetUserResponse:
-        return self.user_service.delete_user(id)
+    def delete_user(self, id: int, user_id: int) -> GetUserResponse:
+        return self.user_service.delete_user(id, user_id=user_id)
