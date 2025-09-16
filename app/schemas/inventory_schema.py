@@ -7,6 +7,7 @@ class Inventory(BaseModel):
     id: int
     product_id: int
     quantity: int
+    quantity_in: int
     supplier: str
     price: int
     created_at: str
