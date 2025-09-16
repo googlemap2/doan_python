@@ -149,9 +149,9 @@ def upgrade() -> None:
         ),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
         sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.Column("deleted_by", sa.Integer(), nullable=False),
+        sa.Column("deleted_by", sa.Integer(), nullable=True),
         sa.Column("created_by", sa.Integer(), nullable=False),
-        sa.Column("updated_by", sa.Integer(), nullable=False),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
         sa.CheckConstraint("quantity >= 0", name="check_quantity_positive"),
         sa.CheckConstraint("quantity_in >= 0", name="check_quantity_in_positive"),
         sa.ForeignKeyConstraint(

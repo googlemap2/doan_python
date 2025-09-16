@@ -1,3 +1,4 @@
+from turtle import update
 from sqlalchemy import (
     Column,
     String,
@@ -23,15 +24,23 @@ class Inventory(Base):
     quantity_in = Column(Integer, nullable=False)
     price = Column(BigInteger, nullable=False)
     created_at = Column(DateTime, server_default=func.current_timestamp())
+    updated_at = Column(DateTime, onupdate=func.current_timestamp())
+    deleted_at = Column(DateTime, nullable=True)
     created_by = Column(Integer, ForeignKey("users.id"))
+    updated_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    deleted_by = Column(Integer, ForeignKey("users.id"), nullable=True)
 
     __table_args__ = (
         CheckConstraint("quantity >= 0", name="check_quantity_positive"),
         CheckConstraint("quantity_in >= 0", name="check_quantity_in_positive"),
     )
-
+    created_by_user = relationship(
+        "User", foreign_keys=[created_by], back_populates="inventories"
+    )
+    updated_by_user = relationship("User", foreign_keys=[updated_by])
+    deleted_by_user = relationship("User", foreign_keys=[deleted_by])
     product = relationship("Product", back_populates="inventories")
-    created_by_user = relationship("User", back_populates="inventories")
+
     order_item_inventories = relationship(
         "OrderItemInventory", back_populates="inventory"
     )

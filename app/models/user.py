@@ -21,8 +21,12 @@ class User(Base):
     created_by = Column(Integer, nullable=True)
     is_active = Column(Boolean, default=True)
 
-    inventories = relationship("Inventory", back_populates="created_by_user")
     orders = relationship("Order", back_populates="created_by_user")
+    inventories = relationship(
+        "Inventory",
+        foreign_keys="Inventory.created_by",
+        back_populates="created_by_user",
+    )
 
     def to_dict(self, exclude_password: bool = True) -> dict:
         data = {

@@ -127,7 +127,11 @@ class ProductService:
 
     def check_product_exists(self, product_id: int) -> bool:
         return (
-            self.db.query(Product).filter(Product.id == product_id).first() is not None
+            self.db.query(Product)
+            .filter(Product.id == product_id)
+            .filter(Product.deleted_at == None)
+            .first()
+            is not None
         )
 
     def delete_product(self, product_id: int, user_id: int) -> UpdateProductResponse:
