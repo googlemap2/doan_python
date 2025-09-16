@@ -42,8 +42,11 @@ def get_inventory(id: int):
 
 
 @router.put("/{id}", response_model=GetInventoryResponse)
-def update_inventory(id: int, inventory_data: UpdateInventory):
-    return inventory_controller.update_inventory(id=id, inventory_data=inventory_data)
+def update_inventory(id: int, inventory_data: UpdateInventory, request: Request):
+    user_id = getattr(request.state, "user_id", None)
+    return inventory_controller.update_inventory(
+        id=id, inventory_data=inventory_data, user_id=user_id
+    )
 
 
 @router.delete("/{id}", response_model=GetInventoryResponse)

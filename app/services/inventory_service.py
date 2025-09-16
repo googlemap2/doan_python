@@ -42,7 +42,10 @@ class InventoryService:
 
     def get_inventory_by_product(self, product_id: int) -> GetInventoryProductResponse:
         inventory = (
-            self.db.query(Inventory).filter(Inventory.product_id == product_id).all()
+            self.db.query(Inventory)
+            .filter(Inventory.product_id == product_id)
+            .filter(Inventory.deleted_at == None)
+            .all()
         )
         if not inventory:
             return ResponseHelper.response_data(
@@ -62,6 +65,7 @@ class InventoryService:
         self, product_name: str | None = None
     ) -> GetInventoriesResponse:
         query = self.db.query(Inventory)
+        query = query.filter(Inventory.deleted_at == None)
         if product_name:
             query = query.join(Inventory.product).filter(
                 Product.name.ilike(f"%{product_name}%")
@@ -84,14 +88,18 @@ class InventoryService:
         )
 
     def update_inventory(
-        self, id: int, inventory_data: UpdateInventory
+        self, id: int, inventory_data: UpdateInventory, user_id: int
     ) -> GetInventoryResponse:
-        inventory = self.db.query(Inventory).filter(Inventory.id == id).first()
+        inventory = (
+            self.db.query(Inventory)
+            .filter(Inventory.id == id)
+            .filter(Inventory.deleted_at == None)
+            .first()
+        )
         if not inventory:
             return ResponseHelper.response_data(
                 success=False, message="Inventory not found"
             )
-
         if inventory.quantity != inventory.quantity_in:
             return ResponseHelper.response_data(
                 success=False,
@@ -101,6 +109,8 @@ class InventoryService:
         inventory.quantity_in = inventory_data.quantity
         inventory.supplier = inventory_data.supplier
         inventory.price = inventory_data.price
+        inventory.updated_by = user_id
+        inventory.updated_at = datetime.now()
         self.db.commit()
         return ResponseHelper.response_data(
             data=inventory.to_dict(), message="Inventory updated successfully"

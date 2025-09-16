@@ -54,10 +54,20 @@ class Inventory(Base):
             "supplier": self.supplier,
             "price": self.price,
             "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None,
             "created_by": self.created_by,
+            "updated_by": self.updated_by,
+            "deleted_by": self.deleted_by,
             "product": self.product.to_dict() if self.product else None,
             "created_by_user": (
                 self.created_by_user.to_dict() if self.created_by_user else None
+            ),
+            "updated_by_user": (
+                self.updated_by_user.to_dict() if self.updated_by_user else None
+            ),
+            "deleted_by_user": (
+                self.deleted_by_user.to_dict() if self.deleted_by_user else None
             ),
             "total_price": self.total_price,
         }

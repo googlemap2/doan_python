@@ -36,8 +36,10 @@ class InventoryController:
         inventory = self.inventory_service.get_inventory(id=id)
         return inventory
 
-    def update_inventory(self, id: int, inventory_data) -> GetInventoryResponse:
-        inventory = self.inventory_service.update_inventory(id, inventory_data)
+    def update_inventory(
+        self, id: int, inventory_data, user_id: int
+    ) -> GetInventoryResponse:
+        inventory = self.inventory_service.update_inventory(id, inventory_data, user_id)
         return inventory
 
     def delete_inventory(self, id: int, user_id: int) -> GetInventoryResponse:
