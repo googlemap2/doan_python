@@ -27,16 +27,6 @@ def upgrade() -> None:
         sa.UniqueConstraint("name"),
     )
     op.create_table(
-        "customers",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("fullname", sa.String(length=100), nullable=False),
-        sa.Column("phone", sa.String(length=20), nullable=False),
-        sa.Column("email", sa.String(length=100), nullable=True),
-        sa.Column("address", sa.Text(), nullable=True),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("phone"),
-    )
-    op.create_table(
         "users",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("username", sa.String(length=50), nullable=False),
@@ -69,8 +59,30 @@ def upgrade() -> None:
         ),
     )
     op.create_table(
-        "orders",
+        "customers",
         sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("fullname", sa.String(length=100), nullable=False),
+        sa.Column("phone", sa.String(length=20), nullable=False),
+        sa.Column("email", sa.String(length=100), nullable=True),
+        sa.Column("address", sa.Text(), nullable=True),
+        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("phone"),
+        sa.ForeignKeyConstraint(
+            ["created_by"],
+            ["users.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["updated_by"],
+            ["users.id"],
+        ),
+    )
+    op.create_table(
+        "orders",
+        sa.Column("id", sa.Uuid(), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("code", sa.String(), nullable=True),
         sa.Column("customer_id", sa.Integer(), nullable=True),
         sa.Column("created_by", sa.Integer(), nullable=False),
@@ -177,7 +189,7 @@ def upgrade() -> None:
         sa.Column(
             "id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False
         ),
-        sa.Column("order_id", sa.Integer(), nullable=True),
+        sa.Column("order_id", sa.Uuid(), nullable=True),
         sa.Column("product_id", sa.Integer(), nullable=True),
         sa.Column("quantity", sa.Integer(), nullable=False),
         sa.Column("price", sa.Numeric(precision=12, scale=2), nullable=False),

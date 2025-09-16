@@ -119,7 +119,6 @@ class ProductService:
         if product_data.is_active is not None:
             product.is_active = product_data.is_active
         product.updated_by = user_id
-        product.updated_at = datetime.now()
         self.db.commit()
         return ResponseHelper.response_data(
             success=True, message="Product updated successfully", data=product.to_dict()
@@ -142,10 +141,18 @@ class ProductService:
             )
         product.is_active = False
         product.updated_by = user_id
-        product.updated_at = datetime.now()
         product.deleted_at = datetime.now()
         product.deleted_by = user_id
         self.db.commit()
         return ResponseHelper.response_data(
             success=True, message="Product deleted successfully", data=product.to_dict()
         )
+
+    def get_product_by_ids(self, product_ids: list[int]) -> list[Product]:
+        products = (
+            self.db.query(Product)
+            .filter(Product.id.in_(product_ids))
+            .filter(Product.deleted_at == None)
+            .all()
+        )
+        return products

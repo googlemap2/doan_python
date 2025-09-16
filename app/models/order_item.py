@@ -26,5 +26,15 @@ class OrderItem(Base):
         "OrderItemInventory", back_populates="order_item"
     )
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "order_id": self.order_id,
+            "product_id": self.product_id,
+            "quantity": self.quantity,
+            "price": float(self.price) if self.price is not None else None,
+            "product": self.product.to_dict() if self.product else None,
+        }
+
     def __repr__(self):
         return f"<OrderItem(id={self.id}, order_id={self.order_id}, product_id={self.product_id})>"

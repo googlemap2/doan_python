@@ -41,7 +41,7 @@ class UserResponse(BaseModel):
     fullname: Optional[str] = None
     phone: Optional[str] = None
     address: Optional[str] = None
-    created_at: datetime
+    created_at: str
     is_active: bool
 
     class Config:

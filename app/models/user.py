@@ -15,7 +15,7 @@ class User(Base):
     password = Column(String(255), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     deleted_at = Column(DateTime, nullable=True)
-    updated_at = Column(DateTime, nullable=True)
+    updated_at = Column(DateTime, onupdate=func.current_timestamp())
     updated_by = Column(Integer, nullable=True)
     deleted_by = Column(Integer, nullable=True)
     created_by = Column(Integer, nullable=True)
@@ -35,8 +35,8 @@ class User(Base):
             "fullname": self.fullname,
             "phone": self.phone,
             "address": self.address,
-            "created_at": self.created_at,
-            "deleted_at": self.deleted_at,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None,
             "is_active": self.is_active,
         }
 

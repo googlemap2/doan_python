@@ -10,6 +10,7 @@ from app.middleware.auth_middleware import AuthenticationMiddleware
 from app.routes.user_routes import router as user_router
 from app.routes.product_routes import router as product_router
 from app.routes.inventory_routes import router as inventory_router
+from app.routes.order_routes import router as order_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -37,6 +38,7 @@ app.add_middleware(AuthenticationMiddleware)
 app.include_router(user_router)
 app.include_router(product_router)
 app.include_router(inventory_router)
+app.include_router(order_router)
 
 
 @app.get("/")

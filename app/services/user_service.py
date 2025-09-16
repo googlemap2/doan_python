@@ -109,7 +109,6 @@ class UserService:
             user.is_active = user_data.is_active
         if user_data.password is not None:
             user.password = hash_password(user_data.password)
-        user.updated_at = datetime.now()
         user.updated_by = user_id
         self.db.commit()
         return ResponseHelper.response_data(
@@ -123,7 +122,6 @@ class UserService:
         user.is_active = False
         user.deleted_at = datetime.now()
         user.deleted_by = user_id
-        user.updated_at = datetime.now()
         user.updated_by = user_id
         self.db.commit()
         return ResponseHelper.response_data(

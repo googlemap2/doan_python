@@ -110,7 +110,6 @@ class InventoryService:
         inventory.supplier = inventory_data.supplier
         inventory.price = inventory_data.price
         inventory.updated_by = user_id
-        inventory.updated_at = datetime.now()
         self.db.commit()
         return ResponseHelper.response_data(
             data=inventory.to_dict(), message="Inventory updated successfully"
@@ -129,6 +128,7 @@ class InventoryService:
             )
         inventory.deleted_at = datetime.now()
         inventory.deleted_by = user_id
+        inventory.updated_by = user_id
         self.db.commit()
         return ResponseHelper.response_data(
             data=inventory.to_dict(), message="Inventory deleted successfully"
