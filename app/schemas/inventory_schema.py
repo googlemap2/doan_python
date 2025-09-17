@@ -24,6 +24,9 @@ class Inventory(BaseModel):
     updated_by_user: Optional[User]
     deleted_by_user: Optional[User]
 
+    class Config:
+        from_attributes = True
+
 
 class ImportWarehouse(BaseModel):
     product_id: int
@@ -43,6 +46,9 @@ class InventoryProduct(BaseModel):
     product: Product
     quantity_in: int
     total_quantity: int
+
+    class Config:
+        from_attributes = True
 
 
 class ImportWarehouseResponse(ResponseType[Inventory]):

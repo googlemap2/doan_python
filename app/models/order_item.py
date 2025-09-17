@@ -34,6 +34,9 @@ class OrderItem(Base):
             "quantity": self.quantity,
             "price": float(self.price) if self.price is not None else None,
             "product": self.product.to_dict() if self.product else None,
+            "order_item_inventories": [
+                inventory.to_dict() for inventory in self.order_item_inventories
+            ],
         }
 
     def __repr__(self):

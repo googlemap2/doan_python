@@ -22,5 +22,14 @@ class OrderItemInventory(Base):
     order_item = relationship("OrderItem", back_populates="order_item_inventories")
     inventory = relationship("Inventory", back_populates="order_item_inventories")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "order_item_id": self.order_item_id,
+            "inventory_id": self.inventory_id,
+            "quantity": self.quantity,
+            "inventory": self.inventory.to_dict() if self.inventory else None,
+        }
+
     def __repr__(self):
         return f"<OrderItemInventory(id={self.id}, order_item_id={self.order_item_id}, inventory_id={self.inventory_id})>"

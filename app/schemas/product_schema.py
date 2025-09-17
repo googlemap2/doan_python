@@ -20,6 +20,7 @@ class CreateProduct(BaseModel):
     code: str
     is_active: Optional[bool] = False
 
+
 class UpdateProduct(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
@@ -54,9 +55,13 @@ class Product(BaseModel):
     updated_by_user: Optional[User] = None
     deleted_by_user: Optional[User] = None
 
+    class Config:
+        from_attributes = True
+
 
 class CreateProductResponse(ResponseType[Product]):
     pass
+
 
 class UpdateProductResponse(ResponseType[Product]):
     pass
@@ -64,6 +69,7 @@ class UpdateProductResponse(ResponseType[Product]):
 
 class GetProductsResponse(ResponseType[list[Product]]):
     pass
+
 
 class GetProductResponse(ResponseType[Product]):
     pass

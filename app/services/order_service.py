@@ -1,12 +1,14 @@
 from datetime import datetime
+import email
 
 from sqlalchemy import and_
 from app.config.database import SessionLocal
+from app.models import order_item
 from app.models.inventory import Inventory
 from app.models.order_item_inventory import OrderItemInventory
 from app.models.product import Product
 from app.utils.helpers import ResponseHelper
-from app.schemas.order_schema import CreateOrder
+from app.schemas.order_schema import CreateOrder, CreateOrderResponse
 from app.models.order import Order
 from app.models.customer import Customer
 from app.models.order_item import OrderItem
@@ -19,7 +21,9 @@ class OrderService:
         self.db = SessionLocal()
         self.product_service = ProductService()
 
-    def create_order(self, order_data: CreateOrder, user_id: int):
+    def create_order(
+        self, order_data: CreateOrder, user_id: int
+    ) -> CreateOrderResponse:
         order_id = uuid4()
         customer = (
             self.db.query(Customer)
@@ -46,6 +50,7 @@ class OrderService:
                 fullname=order_data.customer.fullname,
                 phone=order_data.customer.phone,
                 address=order_data.customer.address,
+                email=order_data.customer.email,
                 created_by=user_id,
             )
             self.db.add(customer)
@@ -54,6 +59,7 @@ class OrderService:
         else:
             customer.fullname = order_data.customer.fullname
             customer.address = order_data.customer.address
+            customer.email = order_data.customer.email
             customer.updated_by = user_id
             self.db.commit()
         code = f"ORD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{user_id}"
@@ -69,15 +75,26 @@ class OrderService:
                     success=False, message="One or more products do not exist"
                 )
             product = next((p for p in get_products if p.id == item.product_id), None)
+            order_item_id = uuid4()
             order_items = OrderItem(
+                id=order_item_id,
                 product_id=item.product_id,
                 quantity=item.quantity,
                 order_id=order.id,
                 price=product.price,
             )
             self.db.add(order_items)
-        self.db.add(order)
 
+            for inventory_data in fifo_deduction["data"]:
+                if inventory_data["product_id"] == item.product_id:
+                    order_item_inventory = OrderItemInventory(
+                        order_item_id=order_item_id,
+                        inventory_id=inventory_data["inventory_id"],
+                        quantity=inventory_data["quantity"],
+                    )
+                    self.db.add(order_item_inventory)
+
+        self.db.add(order)
         self.db.commit()
         self.db.refresh(order)
 

@@ -18,8 +18,6 @@ class Customer(Base):
     created_by = Column(Integer, ForeignKey("users.id"))
     updated_by = Column(Integer, ForeignKey("users.id"))
 
-
-
     def to_dict(self):
         return {
             "id": self.id,
