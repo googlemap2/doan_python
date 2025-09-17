@@ -8,12 +8,18 @@ from app.models.inventory import Inventory
 from app.models.order_item_inventory import OrderItemInventory
 from app.models.product import Product
 from app.utils.helpers import ResponseHelper
-from app.schemas.order_schema import CreateOrder, CreateOrderResponse
+from app.schemas.order_schema import (
+    CreateOrder,
+    CreateOrderResponse,
+    GetOrderResponse,
+    GetOrdersResponse,
+)
 from app.models.order import Order
 from app.models.customer import Customer
 from app.models.order_item import OrderItem
 from app.services.product_service import ProductService
 from uuid import uuid4
+from app.models.user import User
 
 
 class OrderService:
@@ -184,4 +190,56 @@ class OrderService:
             success=True,
             message="Stock deducted successfully using FIFO method",
             data=order_item_inventories,
+        )
+
+    def get_orders(
+        self,
+        customer_name: str | None = None,
+        order_code: str | None = None,
+        product_name: str | None = None,
+        product_code: str | None = None,
+        username: str | None = None,
+    ) -> GetOrdersResponse:
+        query = self.db.query(Order)
+
+        if customer_name:
+            query = query.join(Customer).filter(
+                Customer.fullname.ilike(f"%{customer_name}%")
+            )
+
+        if order_code:
+            query = query.filter(Order.code.ilike(f"%{order_code}%"))
+
+        if username:
+            query = query.join(User, Order.created_by == User.id).filter(
+                User.username.ilike(f"%{username}%")
+            )
+
+        if product_name or product_code:
+            query = query.join(OrderItem).join(Product)
+
+            if product_name:
+                query = query.filter(Product.name.ilike(f"%{product_name}%"))
+
+            if product_code:
+                query = query.filter(Product.code.ilike(f"%{product_code}%"))
+
+        orders = query.all()
+        orders_data = [order.to_dict() for order in orders]
+
+        return ResponseHelper.response_data(
+            data=orders_data, message="Orders retrieved successfully"
+        )
+
+    def get_order(self, order_code: str) -> GetOrderResponse:
+        order = self.db.query(Order).filter(Order.code == order_code).first()
+        if not order:
+            return ResponseHelper.response_data(
+                success=False,
+                message=f"Order with code {order_code} not found.",
+            )
+        return ResponseHelper.response_data(
+            success=True,
+            message="Order retrieved successfully",
+            data=order.to_dict(),
         )

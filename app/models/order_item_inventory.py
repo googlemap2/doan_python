@@ -9,7 +9,7 @@ class OrderItemInventory(Base):
     __tablename__ = "order_item_inventories"
 
     id = Column(Integer, primary_key=True)
-    order_item_id = Column(UUID(as_uuid=True), ForeignKey("order_items.id"))
+    order_item_id = Column(UUID, ForeignKey("order_items.id"))
     inventory_id = Column(Integer, ForeignKey("inventory.id"))
     quantity = Column(Integer, nullable=False)
 

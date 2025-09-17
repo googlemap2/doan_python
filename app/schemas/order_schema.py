@@ -35,3 +35,11 @@ class CreateOrder(BaseModel):
 
 class CreateOrderResponse(ResponseType[Optional[Order]]):
     pass
+
+
+class GetOrdersResponse(ResponseType[list[Order]]):
+    pass
+
+
+class GetOrderResponse(ResponseType[Order]):
+    pass

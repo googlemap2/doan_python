@@ -11,7 +11,7 @@ class OrderItem(Base):
     id = Column(
         UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid()
     )
-    order_id = Column(Integer, ForeignKey("orders.id"))
+    order_id = Column(UUID, ForeignKey("orders.id"))
     product_id = Column(Integer, ForeignKey("products.id"))
     quantity = Column(Integer, nullable=False)
     price = Column(Numeric(12, 2), nullable=False)
@@ -35,7 +35,7 @@ class OrderItem(Base):
             "price": float(self.price) if self.price is not None else None,
             "product": self.product.to_dict() if self.product else None,
             "order_item_inventories": [
-                inventory.to_dict() for inventory in self.order_item_inventories
+                item_inv.to_dict() for item_inv in self.order_item_inventories
             ],
         }
 
