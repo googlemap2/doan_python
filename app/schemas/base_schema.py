@@ -11,6 +11,3 @@ class ResponseType(BaseModel, Generic[DataT]):
     message: str = "Success"
     data: Optional[DataT] = None
 
-
-class ResponseMessage(ResponseType[dict | list[dict] | None]):
-    pass
