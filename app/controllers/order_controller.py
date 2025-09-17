@@ -1,7 +1,8 @@
 from app.config.database import SessionLocal
 from app.utils.helpers import ResponseHelper
 from app.services.order_service import OrderService
-from app.schemas.order_schema import (CreateOrder)
+from app.schemas.order_schema import CreateOrder
+
 
 class OrderController:
 

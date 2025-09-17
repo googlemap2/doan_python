@@ -6,6 +6,8 @@ from fastapi import HTTPException, status
 class ResponseHelper:
     @staticmethod
     def response_data(
-        success: bool = True, data: Any = None, message: str = "Success"
-    ) -> Any:
+        success: bool = True,
+        data: dict | list[dict] | None = None,
+        message: str = "Success",
+    ):
         return {"success": success, "message": message, "data": data}
