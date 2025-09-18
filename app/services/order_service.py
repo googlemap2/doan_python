@@ -1,9 +1,7 @@
 from datetime import datetime
-import email
 
 from sqlalchemy import and_
 from app.config.database import SessionLocal
-from app.models import order_item
 from app.models.inventory import Inventory
 from app.models.order_item_inventory import OrderItemInventory
 from app.models.product import Product
@@ -13,6 +11,7 @@ from app.schemas.order_schema import (
     CreateOrderResponse,
     GetOrderResponse,
     GetOrdersResponse,
+    UpdateOrder,
 )
 from app.models.order import Order
 from app.models.customer import Customer
@@ -30,12 +29,13 @@ class OrderService:
     def create_order(
         self, order_data: CreateOrder, user_id: int
     ) -> CreateOrderResponse:
-        order_id = uuid4()
-        customer = (
-            self.db.query(Customer)
-            .filter(Customer.phone == order_data.customer.phone)
-            .first()
-        )
+
+        product_ids = [item.product_id for item in order_data.order_item]
+        get_products = self.product_service.get_product_by_ids(product_ids)
+        if len(get_products) != len(product_ids):
+            return ResponseHelper.response_data(
+                success=False, message="One or more products do not exist"
+            )
 
         get_stock = self.check_stock_availability(order_data.order_item)
         if not get_stock["success"]:
@@ -44,13 +44,12 @@ class OrderService:
         fifo_deduction = self.fifo_stock_deduction(order_data.order_item)
         if not fifo_deduction["success"]:
             return fifo_deduction
-
-        product_ids = [item.product_id for item in order_data.order_item]
-        get_products = self.product_service.get_product_by_ids(product_ids)
-        if len(get_products) != len(product_ids):
-            return ResponseHelper.response_data(
-                success=False, message="One or more products do not exist"
-            )
+        order_id = uuid4()
+        customer = (
+            self.db.query(Customer)
+            .filter(Customer.phone == order_data.customer.phone)
+            .first()
+        )
         if not customer:
             customer = Customer(
                 fullname=order_data.customer.fullname,
@@ -68,12 +67,15 @@ class OrderService:
             customer.email = order_data.customer.email
             customer.updated_by = user_id
             self.db.commit()
+
         code = f"ORD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{user_id}"
         order = Order(
             id=order_id,
             code=code,
             created_by=user_id,
             customer_id=customer.id,
+            address_delivery=order_data.address_delivery,
+            phone=order_data.phone,
         )
         for item in order_data.order_item:
             if item.product_id not in [product.id for product in get_products]:
@@ -241,5 +243,27 @@ class OrderService:
         return ResponseHelper.response_data(
             success=True,
             message="Order retrieved successfully",
+            data=order.to_dict(),
+        )
+
+    def update_order(
+        self, order_code: str, order_data: UpdateOrder, usrer_id: int
+    ) -> GetOrderResponse:
+        order = self.db.query(Order).filter(Order.code == order_code).first()
+        if not order:
+            return ResponseHelper.response_data(
+                success=False,
+                message=f"Order with code {order_code} not found.",
+            )
+        if order_data.address_delivery is not None:
+            order.address_delivery = order_data.address_delivery
+        if order_data.phone is not None:
+            order.phone = order_data.phone
+        order.updated_by = usrer_id
+        self.db.commit()
+        self.db.refresh(order)
+        return ResponseHelper.response_data(
+            success=True,
+            message="Order updated successfully",
             data=order.to_dict(),
         )

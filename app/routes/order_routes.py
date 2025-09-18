@@ -8,6 +8,7 @@ from app.schemas.order_schema import (
     CreateOrderResponse,
     GetOrderResponse,
     GetOrdersResponse,
+    UpdateOrder,
 )
 
 router = APIRouter(prefix="/order", tags=["order"])
@@ -41,3 +42,9 @@ def get_orders(
 @router.get("/{order_code}", response_model=GetOrderResponse)
 def get_order(order_code: str) -> GetOrderResponse:
     return order_controller.get_order(order_code)
+
+
+@router.put("/{order_code}", response_model=GetOrderResponse)
+def update_order(order_code: str, order_data: UpdateOrder, request: Request) -> GetOrderResponse:
+    user_id = getattr(request.state, "user_id", None)
+    return order_controller.update_order(order_code, order_data, user_id)

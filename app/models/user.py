@@ -21,7 +21,11 @@ class User(Base):
     created_by = Column(Integer, nullable=True)
     is_active = Column(Boolean, default=True)
 
-    orders = relationship("Order", back_populates="created_by_user")
+    orders = relationship(
+        "Order", 
+        foreign_keys="Order.created_by",
+        back_populates="created_by_user"
+    )
     inventories = relationship(
         "Inventory",
         foreign_keys="Inventory.created_by",

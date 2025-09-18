@@ -1,7 +1,13 @@
 from app.config.database import SessionLocal
 from app.utils.helpers import ResponseHelper
 from app.services.order_service import OrderService
-from app.schemas.order_schema import CreateOrder, CreateOrderResponse, GetOrderResponse, GetOrdersResponse
+from app.schemas.order_schema import (
+    CreateOrder,
+    CreateOrderResponse,
+    GetOrderResponse,
+    GetOrdersResponse,
+    UpdateOrder,
+)
 
 
 class OrderController:
@@ -35,4 +41,10 @@ class OrderController:
 
     def get_order(self, order_code: str) -> GetOrderResponse:
         response = self.order_service.get_order(order_code)
+        return response
+
+    def update_order(
+        self, order_code: str, order_data: UpdateOrder, user_id: int
+    ) -> GetOrderResponse:
+        response = self.order_service.update_order(order_code, order_data, user_id)
         return response
