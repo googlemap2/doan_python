@@ -27,14 +27,20 @@ class InventoryController:
         inventory = self.inventory_service.get_inventory_by_product(product_id)
         return inventory
 
-    def get_inventory_products(self) -> GetInventoryProductsResponse:
-        inventories = self.inventory_service.get_inventory_products()
+    def get_inventory_products(
+        self, product_name: str | None = None, product_code: str | None = None
+    ) -> GetInventoryProductsResponse:
+        inventories = self.inventory_service.get_inventory_products(
+            product_name=product_name, product_code=product_code
+        )
         return inventories
 
     def get_inventories(
-        self, product_name: str | None = None
+        self, product_name: str | None = None, product_code: str | None = None
     ) -> GetInventoriesResponse:
-        inventories = self.inventory_service.get_inventories(product_name=product_name)
+        inventories = self.inventory_service.get_inventories(
+            product_name=product_name, product_code=product_code
+        )
         return inventories
 
     def get_inventory(self, id: int) -> GetInventoryResponse:

@@ -20,18 +20,20 @@ order_controller = OrderController()
 
 @router.post("/")
 def create_order(order_data: CreateOrder, request: Request) -> CreateOrderResponse:
+    """Tạo mới đơn hàng"""
     user_id = getattr(request.state, "user_id", None)
     return order_controller.create_order(order_data, user_id)
 
 
 @router.get("/", response_model=GetOrdersResponse)
 def get_orders(
-    customer_name: str | None = Query(None, description="Filter by customer name"),
-    order_code: str | None = Query(None, description="Filter by order code"),
-    product_name: str | None = Query(None, description="Filter by product name"),
-    product_code: str | None = Query(None, description="Filter by product code"),
-    username: str | None = Query(None, description="Filter by username"),
+    customer_name: str | None = Query(None),
+    order_code: str | None = Query(None),
+    product_name: str | None = Query(None),
+    product_code: str | None = Query(None),
+    username: str | None = Query(None),
 ) -> GetOrdersResponse:
+    """Lấy danh sách đơn hàng với các bộ lọc tùy chọn"""
     return order_controller.get_orders(
         customer_name=customer_name,
         order_code=order_code,
@@ -43,6 +45,7 @@ def get_orders(
 
 @router.get("/{order_code}", response_model=GetOrderResponse)
 def get_order(order_code: str) -> GetOrderResponse:
+    """Lấy thông tin đơn hàng theo mã đơn hàng"""
     return order_controller.get_order(order_code)
 
 
@@ -50,6 +53,7 @@ def get_order(order_code: str) -> GetOrderResponse:
 def update_order(
     order_code: str, order_data: UpdateOrder, request: Request
 ) -> GetOrderResponse:
+    """Cập nhật thông tin đơn hàng"""
     user_id = getattr(request.state, "user_id", None)
     return order_controller.update_order(order_code, order_data, user_id)
 
@@ -58,6 +62,7 @@ def update_order(
 def get_monthly_sales_report(
     month: int,
     year: int,
-    username: str | None = Query(None, description="Filter by username"),
+    username: str | None = Query(None),
 ) -> MonthlySalesReportResponse:
+    """Báo cáo doanh số bán hàng theo tháng, có thể lọc theo username người tạo đơn hàng"""
     return order_controller.get_monthly_sales_report(username, month, year)

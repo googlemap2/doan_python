@@ -35,26 +35,31 @@ def get_product(product_id: int):
     """Lấy thông tin sản phẩm theo ID"""
     return product_controller.get_product(product_id)
 
+
 @router.get("/", response_model=GetProductsResponse)
 def get_products(
-    name: Optional[str] = Query(None, description="Filter by product name"),
-    code: Optional[str] = Query(None, description="Filter by product code"),
-    color: Optional[str] = Query(None, description="Filter by product color"),
-    capacity: Optional[str] = Query(None, description="Filter by product capacity"),
-):
+    name: Optional[str] = Query(None),
+    code: Optional[str] = Query(None),
+    color: Optional[str] = Query(None),
+    capacity: Optional[str] = Query(None),
+) -> GetProductsResponse:
     """Lấy danh sách sản phẩm với các bộ lọc tùy chọn"""
     return product_controller.get_products(
         name=name, code=code, color=color, capacity=capacity
     )
 
+
 @router.put("/{product_id}", response_model=UpdateProductResponse)
-def update_product(product_id: int, product_data: UpdateProduct, request: Request):
+def update_product(
+    product_id: int, product_data: UpdateProduct, request: Request
+) -> UpdateProductResponse:
     """Cập nhật thông tin sản phẩm"""
     user_id = getattr(request.state, "user_id", None)
     return product_controller.update_product(product_id, product_data, user_id)
 
+
 @router.delete("/{product_id}", response_model=UpdateProductResponse)
-def delete_product(product_id: int, request: Request):
+def delete_product(product_id: int, request: Request) -> UpdateProductResponse:
     """Xóa sản phẩm"""
     user_id = getattr(request.state, "user_id", None)
     return product_controller.delete_product(product_id, user_id)

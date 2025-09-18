@@ -62,10 +62,18 @@ class InventoryService:
             data=result, message="Inventory fetched successfully"
         )
 
-    def get_inventory_products(self) -> GetInventoryProductsResponse:
-        inventories = (
-            self.db.query(Inventory).filter(Inventory.deleted_at == None).all()
-        )
+    def get_inventory_products(
+        self, product_name: str | None = None, product_code: str | None = None
+    ) -> GetInventoryProductsResponse:
+        query = self.db.query(Inventory).filter(Inventory.deleted_at == None)
+        if product_name:
+            query = query.join(Inventory.product).filter(
+                Product.name.ilike(f"%{product_name}%")
+            )
+        if product_code:
+            query = query.join(Inventory.product).filter(Product.code == product_code)
+        inventories = query.all()
+
         inventory_dict = {}
         for item in inventories:
             if item.product_id not in inventory_dict:
@@ -85,14 +93,15 @@ class InventoryService:
         )
 
     def get_inventories(
-        self, product_name: str | None = None
+        self, product_name: str | None = None, product_code: str | None = None
     ) -> GetInventoriesResponse:
-        query = self.db.query(Inventory)
-        query = query.filter(Inventory.deleted_at == None)
+        query = self.db.query(Inventory).filter(Inventory.deleted_at == None)
         if product_name:
             query = query.join(Inventory.product).filter(
                 Product.name.ilike(f"%{product_name}%")
             )
+        if product_code:
+            query = query.join(Inventory.product).filter(Product.code == product_code)
         inventories = query.all()
         return ResponseHelper.response_data(
             success=True,
