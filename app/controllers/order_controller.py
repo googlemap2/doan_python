@@ -20,6 +20,7 @@ class OrderController:
     def create_order(
         self, order_data: CreateOrder, user_id: int
     ) -> CreateOrderResponse:
+        """Tạo đơn hàng mới"""
         response = self.order_service.create_order(order_data, user_id)
         return response
 
@@ -31,6 +32,7 @@ class OrderController:
         product_code: str | None = None,
         username: str | None = None,
     ) -> GetOrdersResponse:
+        """Lấy danh sách đơn hàng với các bộ lọc"""
         response = self.order_service.get_orders(
             customer_name=customer_name,
             order_code=order_code,
@@ -41,16 +43,19 @@ class OrderController:
         return response
 
     def get_order(self, order_code: str) -> GetOrderResponse:
+        """Lấy thông tin đơn hàng theo mã đơn hàng"""
         response = self.order_service.get_order(order_code)
         return response
 
     def update_order(
         self, order_code: str, order_data: UpdateOrder, user_id: int
     ) -> GetOrderResponse:
+        """Cập nhật thông tin đơn hàng"""
         response = self.order_service.update_order(order_code, order_data, user_id)
         return response
 
     def get_monthly_sales_report(
         self, username: str | None, month: int, year: int
     ) -> MonthlySalesReportResponse:
+        """Lấy báo cáo doanh số bán hàng theo tháng"""
         return self.order_service.get_monthly_sales_report(username, month, year)
