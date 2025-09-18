@@ -1,5 +1,9 @@
 from app.config.database import SessionLocal
-from app.schemas.customer_schema import GetCustomerResponse, GetCustomersResponse
+from app.schemas.customer_schema import (
+    GetCustomerResponse,
+    GetCustomersResponse,
+    MonthlySalesReportResponse,
+)
 from app.services.customer_service import CustomerService
 from app.utils.helpers import ResponseHelper
 
@@ -33,5 +37,7 @@ class CustomerController:
         response = self.customer_service.update_customer(phone=phone, user_id=user_id)
         return response
 
-    def get_monthly_sales_report(self, month: int, year: int):
+    def get_monthly_sales_report(
+        self, month: int, year: int
+    ) -> MonthlySalesReportResponse:
         return self.customer_service.get_monthly_sales_report(month, year)

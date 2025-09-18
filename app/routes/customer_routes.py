@@ -4,7 +4,11 @@ from fastapi.security import HTTPBearer
 from fastapi import Request
 
 from app.controllers.customer_controller import CustomerController
-from app.schemas.customer_schema import GetCustomerResponse, GetCustomersResponse
+from app.schemas.customer_schema import (
+    GetCustomerResponse,
+    GetCustomersResponse,
+    MonthlySalesReportResponse,
+)
 
 
 router = APIRouter(prefix="/customer", tags=["customer"])
@@ -38,9 +42,9 @@ def update_customer(phone: str, request: Request):
     return customer_controller.update_customer(phone=phone, user_id=user_id)
 
 
-@router.get("/sales/report_monthly")
+@router.get("/sales/report_monthly", response_model=MonthlySalesReportResponse)
 def get_monthly_sales_report(
     month: int,
     year: int,
-):
+) -> MonthlySalesReportResponse:
     return customer_controller.get_monthly_sales_report(month, year)

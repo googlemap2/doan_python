@@ -1,7 +1,7 @@
 from datetime import datetime
 from app.config.database import SessionLocal
 from app.models.customer import Customer
-from app.schemas.customer_schema import GetCustomerResponse
+from app.schemas.customer_schema import GetCustomerResponse, MonthlySalesReportResponse
 from app.utils.helpers import ResponseHelper
 
 
@@ -63,7 +63,9 @@ class CustomerService:
             data=customer.to_dict(),
         )
 
-    def get_monthly_sales_report(self, month: int, year: int):
+    def get_monthly_sales_report(
+        self, month: int, year: int
+    ) -> MonthlySalesReportResponse:
         reports = []
         customers = self.db.query(Customer).all()
         for customer in customers:

@@ -1,3 +1,4 @@
+import email
 from typing import Optional
 from venv import create
 from h11 import Response
@@ -34,4 +35,30 @@ class GetCustomersResponse(ResponseType[list[Customer]]):
 
 
 class GetCustomerResponse(ResponseType[Customer]):
+    pass
+
+
+class MonthlySalesReportSaleProduct(BaseModel):
+    product_id: int
+    product_name: str
+    product_code: str
+    total_sales: float
+
+    class Config:
+        from_attributes = True
+
+
+class MonthlySalesReport(BaseModel):
+    customer_name: str
+    phone: str
+    email: Optional[str] = None
+    address: Optional[str] = None
+    sale_products: list[MonthlySalesReportSaleProduct]
+    total_sales: float
+
+    class Config:
+        from_attributes = True
+
+
+class MonthlySalesReportResponse(ResponseType[list[MonthlySalesReport]]):
     pass

@@ -34,7 +34,7 @@ def get_user(id: int):
 
 @router.get("/", response_model=GetUsersResponse)
 def get_users(
-    username: str | None = Query(None, description="Filter by username"),
+    username: str | None = Query(None, description="Lọc theo username"),
     phone: str | None = Query(None, description="Filter by phone number"),
     address: str | None = Query(None, description="Filter by address"),
     fullname: str | None = Query(None, description="Filter by full name"),
