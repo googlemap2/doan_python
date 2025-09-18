@@ -3,6 +3,7 @@ from fastapi import APIRouter, Query
 from fastapi.security import HTTPBearer
 from app.controllers.inventory_controller import InventoryController
 from app.schemas.inventory_schema import (
+    GetInventoryProductsResponse,
     ImportWarehouse,
     ImportWarehouseResponse,
     GetInventoryProductResponse,
@@ -27,6 +28,11 @@ def import_warehouse(inventory_data: ImportWarehouse, request: Request):
 )
 def get_inventory_product(product_id: int):
     return inventory_controller.get_inventory_product(product_id=product_id)
+
+
+@router.get("/get_inventory_products", response_model=GetInventoryProductsResponse)
+def get_inventory_products():
+    return inventory_controller.get_inventory_products()
 
 
 @router.get("/")

@@ -2,6 +2,7 @@ from datetime import datetime
 from app.config.database import SessionLocal
 from app.utils.helpers import ResponseHelper
 from app.schemas.inventory_schema import (
+    GetInventoryProductsResponse,
     ImportWarehouse,
     ImportWarehouseResponse,
     GetInventoryProductResponse,
@@ -59,6 +60,28 @@ class InventoryService:
         }
         return ResponseHelper.response_data(
             data=result, message="Inventory fetched successfully"
+        )
+
+    def get_inventory_products(self) -> GetInventoryProductsResponse:
+        inventories = (
+            self.db.query(Inventory).filter(Inventory.deleted_at == None).all()
+        )
+        inventory_dict = {}
+        for item in inventories:
+            if item.product_id not in inventory_dict:
+                inventory_dict[item.product_id] = {
+                    "product_id": item.product_id,
+                    "quantity_in": 0,
+                    "total_quantity": 0,
+                    "product": item.product.to_dict() if item.product else None,
+                }
+            inventory_dict[item.product_id]["quantity_in"] += item.quantity_in
+            inventory_dict[item.product_id]["total_quantity"] += item.quantity
+        result = list(inventory_dict.values())
+        return ResponseHelper.response_data(
+            success=True,
+            message="Inventory products retrieved successfully",
+            data=result,
         )
 
     def get_inventories(

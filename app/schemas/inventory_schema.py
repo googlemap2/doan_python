@@ -59,6 +59,10 @@ class GetInventoryProductResponse(ResponseType[InventoryProduct]):
     pass
 
 
+class GetInventoryProductsResponse(ResponseType[list[InventoryProduct]]):
+    pass
+
+
 class GetInventoriesResponse(ResponseType[list[Inventory]]):
     pass
 

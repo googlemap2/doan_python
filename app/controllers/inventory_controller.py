@@ -3,6 +3,7 @@ from app.services.inventory_service import InventoryService
 from app.utils.helpers import ResponseHelper
 from app.schemas.inventory_schema import (
     GetInventoriesResponse,
+    GetInventoryProductsResponse,
     ImportWarehouse,
     ImportWarehouseResponse,
     GetInventoryProductResponse,
@@ -25,6 +26,10 @@ class InventoryController:
     def get_inventory_product(self, product_id: int) -> GetInventoryProductResponse:
         inventory = self.inventory_service.get_inventory_by_product(product_id)
         return inventory
+
+    def get_inventory_products(self) -> GetInventoryProductsResponse:
+        inventories = self.inventory_service.get_inventory_products()
+        return inventories
 
     def get_inventories(
         self, product_name: str | None = None
