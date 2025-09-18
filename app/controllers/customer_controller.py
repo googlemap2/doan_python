@@ -21,6 +21,7 @@ class CustomerController:
         address: str | None = None,
         email: str | None = None,
     ) -> GetCustomersResponse:
+        """Lấy danh sách khách hàng với các bộ lọc tùy chọn"""
         response = self.customer_service.get_customers(
             name=name,
             phone=phone,
@@ -30,14 +31,17 @@ class CustomerController:
         return response
 
     def get_customer(self, phone: str) -> GetCustomerResponse:
+        """Lấy thông tin khách hàng theo số điện thoại"""
         response = self.customer_service.get_customer(phone=phone)
         return response
 
     def update_customer(self, phone: str, user_id: int) -> GetCustomerResponse:
+        """Cập nhật thông tin khách hàng"""
         response = self.customer_service.update_customer(phone=phone, user_id=user_id)
         return response
 
     def get_monthly_sales_report(
         self, month: int, year: int
     ) -> MonthlySalesReportResponse:
+        """Lấy báo cáo doanh số bán hàng theo tháng"""
         return self.customer_service.get_monthly_sales_report(month, year)

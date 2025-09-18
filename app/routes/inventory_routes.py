@@ -50,7 +50,7 @@ def get_inventories(
     product_name: Optional[str] = Query(None),
     product_code: Optional[str] = Query(None),
 ) -> GetInventoriesResponse:
-    """Lấy danh sách tồn kho với bộ lọc tùy chọn"""
+    """Lấy danh sách lịch sử nhập kho với bộ lọc tùy chọn"""
     return inventory_controller.get_inventories(
         product_name=product_name, product_code=product_code
     )
@@ -58,7 +58,7 @@ def get_inventories(
 
 @router.get("/{id}", response_model=GetInventoryResponse)
 def get_inventory(id: int) -> GetInventoryResponse:
-    """Lấy thông tin tồn kho theo id"""
+    """Lấy thông tin lịch sử nhập kho theo id"""
     return inventory_controller.get_inventory(id=id)
 
 
