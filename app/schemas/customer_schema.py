@@ -31,3 +31,7 @@ class CustomerCreateOrder(BaseModel):
 
 class GetCustomersResponse(ResponseType[list[Customer]]):
     pass
+
+
+class GetCustomerResponse(ResponseType[Customer]):
+    pass

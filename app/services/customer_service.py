@@ -1,6 +1,7 @@
 from datetime import datetime
 from app.config.database import SessionLocal
 from app.models.customer import Customer
+from app.schemas.customer_schema import GetCustomerResponse
 from app.utils.helpers import ResponseHelper
 
 
@@ -31,4 +32,33 @@ class CustomerService:
 
         return ResponseHelper.response_data(
             success=True, data=customer_list, message="Customers retrieved successfully"
+        )
+
+    def get_customer(self, phone: str) -> GetCustomerResponse:
+        customer = self.db.query(Customer).filter(Customer.phone == phone).first()
+        if not customer:
+            return ResponseHelper.response_data(
+                success=False,
+                message=f"Customer with phone {phone} not found.",
+            )
+        return ResponseHelper.response_data(
+            success=True,
+            message="Customer retrieved successfully",
+            data=customer.to_dict(),
+        )
+
+    def update_customer(self, phone: str, user_id: int) -> GetCustomerResponse:
+        customer = self.db.query(Customer).filter(Customer.phone == phone).first()
+        if not customer:
+            return ResponseHelper.response_data(
+                success=False,
+                message=f"Customer with phone {phone} not found.",
+            )
+        customer.updated_by = user_id
+        self.db.commit()
+        self.db.refresh(customer)
+        return ResponseHelper.response_data(
+            success=True,
+            message="Customer updated successfully",
+            data=customer.to_dict(),
         )

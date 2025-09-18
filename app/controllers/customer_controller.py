@@ -1,5 +1,5 @@
 from app.config.database import SessionLocal
-from app.schemas.customer_schema import GetCustomersResponse
+from app.schemas.customer_schema import GetCustomerResponse, GetCustomersResponse
 from app.services.customer_service import CustomerService
 from app.utils.helpers import ResponseHelper
 
@@ -23,4 +23,12 @@ class CustomerController:
             address=address,
             email=email,
         )
+        return response
+
+    def get_customer(self, phone: str) -> GetCustomerResponse:
+        response = self.customer_service.get_customer(phone=phone)
+        return response
+
+    def update_customer(self, phone: str, user_id: int) -> GetCustomerResponse:
+        response = self.customer_service.update_customer(phone=phone, user_id=user_id)
         return response

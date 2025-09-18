@@ -4,7 +4,7 @@ from fastapi.security import HTTPBearer
 from fastapi import Request
 
 from app.controllers.customer_controller import CustomerController
-from app.schemas.customer_schema import GetCustomersResponse
+from app.schemas.customer_schema import GetCustomerResponse, GetCustomersResponse
 
 
 router = APIRouter(prefix="/customer", tags=["customer"])
@@ -25,3 +25,13 @@ def get_customers(
         address=address,
         email=email,
     )
+
+
+@router.get("/{phone}", response_model=GetCustomerResponse)
+def get_customer(phone: str) -> GetCustomerResponse:
+    return customer_controller.get_customer(phone=phone)
+
+@router.put("/{phone}", response_model=GetCustomerResponse)
+def update_customer(phone: str, request: Request):
+    user_id = getattr(request.state, "user_id", None)
+    return customer_controller.update_customer(phone=phone, user_id=user_id)
