@@ -23,6 +23,7 @@ class InventoryService:
     def import_warehouse(
         self, inventory_data: ImportWarehouse, user_id: int
     ) -> ImportWarehouseResponse:
+        """Nhập kho sản phẩm"""
         if not self.product_service.check_product_exists(inventory_data.product_id):
             return ResponseHelper.response_data(
                 success=False, message="Product does not exist"
@@ -42,6 +43,7 @@ class InventoryService:
         )
 
     def get_inventory_by_product(self, product_id: int) -> GetInventoryProductResponse:
+        """Lấy thông tin tồn kho của sản phẩm"""
         inventory = (
             self.db.query(Inventory)
             .filter(Inventory.product_id == product_id)
@@ -65,6 +67,7 @@ class InventoryService:
     def get_inventory_products(
         self, product_name: str | None = None, product_code: str | None = None
     ) -> GetInventoryProductsResponse:
+        """Lấy thông tin tồn kho của tất cả sản phẩm với bộ lọc"""
         query = self.db.query(Inventory).filter(Inventory.deleted_at == None)
         if product_name:
             query = query.join(Inventory.product).filter(

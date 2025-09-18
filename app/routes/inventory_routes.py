@@ -39,7 +39,7 @@ def get_inventory_product(product_id: int) -> GetInventoryProductResponse:
 def get_inventory_products(
     product_name: Optional[str] = Query(None), product_code: Optional[str] = Query(None)
 ) -> GetInventoryProductsResponse:
-    """Lấy thông tin tồn kho của tất cả sản phẩm với bộ lọc tùy chọn"""
+    """Lấy thông tin tồn kho của tất cả sản phẩm với bộ lọc"""
     return inventory_controller.get_inventory_products(
         product_name=product_name, product_code=product_code
     )
@@ -50,7 +50,7 @@ def get_inventories(
     product_name: Optional[str] = Query(None),
     product_code: Optional[str] = Query(None),
 ) -> GetInventoriesResponse:
-    """Lấy danh sách lịch sử nhập kho với bộ lọc tùy chọn"""
+    """Lấy danh sách lịch sử nhập kho với bộ lọc"""
     return inventory_controller.get_inventories(
         product_name=product_name, product_code=product_code
     )

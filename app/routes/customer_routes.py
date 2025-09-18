@@ -23,7 +23,7 @@ def get_customers(
     address: str | None = Query(None),
     email: str | None = Query(None),
 ) -> GetCustomersResponse:
-    """Lấy danh sách khách hàng với các bộ lọc tùy chọn"""
+    """Lấy danh sách khách hàng với các bộ lọc"""
     return customer_controller.get_customers(
         name=name,
         phone=phone,

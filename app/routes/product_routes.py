@@ -32,7 +32,7 @@ def create_product(
 
 @router.get("/{product_id}", response_model=GetProductResponse)
 def get_product(product_id: int):
-    """Lấy thông tin sản phẩm theo ID"""
+    """Lấy thông tin sản phẩm theo id"""
     return product_controller.get_product(product_id)
 
 
@@ -43,7 +43,7 @@ def get_products(
     color: Optional[str] = Query(None),
     capacity: Optional[str] = Query(None),
 ) -> GetProductsResponse:
-    """Lấy danh sách sản phẩm với các bộ lọc tùy chọn"""
+    """Lấy danh sách sản phẩm với các bộ lọc"""
     return product_controller.get_products(
         name=name, code=code, color=color, capacity=capacity
     )

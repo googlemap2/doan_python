@@ -1,7 +1,11 @@
 from datetime import datetime
 from app.config.database import SessionLocal
 from app.models.customer import Customer
-from app.schemas.customer_schema import GetCustomerResponse, MonthlySalesReportResponse
+from app.schemas.customer_schema import (
+    GetCustomerResponse,
+    GetCustomersResponse,
+    MonthlySalesReportResponse,
+)
 from app.utils.helpers import ResponseHelper
 
 
@@ -15,7 +19,8 @@ class CustomerService:
         phone: str | None = None,
         address: str | None = None,
         email: str | None = None,
-    ):
+    ) -> GetCustomersResponse:
+        """Lấy danh sách khách hàng với các bộ lọc tùy chọn"""
         query = self.db.query(Customer)
 
         if name:
@@ -35,6 +40,7 @@ class CustomerService:
         )
 
     def get_customer(self, phone: str) -> GetCustomerResponse:
+        """Lấy thông tin khách hàng theo số điện thoại"""
         customer = self.db.query(Customer).filter(Customer.phone == phone).first()
         if not customer:
             return ResponseHelper.response_data(
@@ -48,6 +54,7 @@ class CustomerService:
         )
 
     def update_customer(self, phone: str, user_id: int) -> GetCustomerResponse:
+        """Cập nhật thông tin khách hàng"""
         customer = self.db.query(Customer).filter(Customer.phone == phone).first()
         if not customer:
             return ResponseHelper.response_data(
@@ -66,6 +73,7 @@ class CustomerService:
     def get_monthly_sales_report(
         self, month: int, year: int
     ) -> MonthlySalesReportResponse:
+        """Lấy báo cáo doanh số bán hàng theo tháng"""
         reports = []
         customers = self.db.query(Customer).all()
         for customer in customers:

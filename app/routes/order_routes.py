@@ -33,7 +33,7 @@ def get_orders(
     product_code: str | None = Query(None),
     username: str | None = Query(None),
 ) -> GetOrdersResponse:
-    """Lấy danh sách đơn hàng với các bộ lọc tùy chọn"""
+    """Lấy danh sách đơn hàng với các bộ lọc"""
     return order_controller.get_orders(
         customer_name=customer_name,
         order_code=order_code,
