@@ -20,6 +20,7 @@ class Customer(Base):
 
     created_by_user = relationship("User", foreign_keys=[created_by])
     updated_by_user = relationship("User", foreign_keys=[updated_by])
+    orders = relationship("Order", back_populates="customer")
 
     def to_dict(self):
         return {
@@ -41,6 +42,56 @@ class Customer(Base):
         }
 
     orders = relationship("Order", back_populates="customer")
+
+    def calculate_monthly_sales(self, month: int, year: int) -> float:
+        """Tính doanh số mua hàng trong tháng"""
+        total_sales = 0
+        for order in self.orders:
+            if (
+                order.created_at
+                and order.created_at.month == month
+                and order.created_at.year == year
+            ):
+                for item in order.order_items:
+                    total_sales += item.quantity * item.price
+        return total_sales
+
+    def calculate_monthly_sales_by_product(self, month: int, year: int) -> list:
+        """Thống kê doanh số mua sản phẩm trong tháng"""
+        sales_by_product = []
+        for order in self.orders:
+            if (
+                order.created_at
+                and order.created_at.month == month
+                and order.created_at.year == year
+            ):
+                for item in order.order_items:
+                    product_id = item.product_id
+                    sales_amount = item.quantity * item.price
+                    find_product = next(
+                        (
+                            prod
+                            for prod in sales_by_product
+                            if prod["product_id"] == product_id
+                        ),
+                        None,
+                    )
+                    if find_product:
+                        find_product["total_sales"] += sales_amount
+                    else:
+                        sales_by_product.append(
+                            {
+                                "product_id": product_id,
+                                "product_name": (
+                                    item.product.name if item.product else None
+                                ),
+                                "product_code": (
+                                    item.product.code if item.product else None
+                                ),
+                                "total_sales": sales_amount,
+                            }
+                        )
+        return sales_by_product
 
     def __repr__(self):
         return f"<Customer(id={self.id}, fullname='{self.fullname}', phone='{self.phone}')>"

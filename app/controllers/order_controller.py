@@ -6,6 +6,7 @@ from app.schemas.order_schema import (
     CreateOrderResponse,
     GetOrderResponse,
     GetOrdersResponse,
+    MonthlySalesReportResponse,
     UpdateOrder,
 )
 
@@ -48,3 +49,8 @@ class OrderController:
     ) -> GetOrderResponse:
         response = self.order_service.update_order(order_code, order_data, user_id)
         return response
+
+    def get_monthly_sales_report(
+        self, username: str | None, month: int, year: int
+    ) -> MonthlySalesReportResponse:
+        return self.order_service.get_monthly_sales_report(username, month, year)

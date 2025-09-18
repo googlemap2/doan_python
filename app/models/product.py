@@ -77,5 +77,57 @@ class Product(Base):
             ),
         }
 
+    def calculate_monthly_sales(self, month: int, year: int) -> float:
+        """Tính doanh số bán sản phẩm trong tháng"""
+        total_sales = 0
+        for item in self.order_items:
+            if (
+                item.order
+                and item.order.created_at
+                and item.order.created_at.month == month
+                and item.order.created_at.year == year
+            ):
+                total_sales += item.quantity * item.price
+        return total_sales
+
+    def calculate_monthly_sales_by_product(self, month: int, year: int) -> list:
+        """Tính doanh số bán sản phẩm trong tháng"""
+        sales_data = {}
+        for item in self.order_items:
+            if (
+                item.order
+                and item.order.created_at
+                and item.order.created_at.month == month
+                and item.order.created_at.year == year
+            ):
+                key = f"{self.name} ({self.code})"
+                if key not in sales_data:
+                    sales_data[key] = {
+                        "product_id": self.id,
+                        "product_name": self.name,
+                        "product_code": self.code,
+                        "total_quantity": 0,
+                        "total_sales": 0,
+                    }
+                sales_data[key]["total_quantity"] += item.quantity
+                sales_data[key]["total_sales"] += item.quantity * item.price
+        return list(sales_data.values())
+
+    def calculate_monthly_inventory_cost(self, month: int, year: int) -> float:
+        """Tính số tiền nhập kho của lô hàng đã bán trong tháng"""
+        total_cost = 0
+        for item in self.order_items:
+            if (
+                item.order
+                and item.order.created_at
+                and item.order.created_at.month == month
+                and item.order.created_at.year == year
+            ):
+                for oi_inv in item.order_item_inventories:
+                    if oi_inv.inventory is not None:
+                        total_cost += oi_inv.quantity * oi_inv.inventory.price
+
+        return total_cost
+
     def __repr__(self):
         return f"<Product(id={self.id}, name='{self.name}', code='{self.code}')>"

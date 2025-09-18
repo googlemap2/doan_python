@@ -56,3 +56,22 @@ class GetOrdersResponse(ResponseType[list[Order]]):
 
 class GetOrderResponse(ResponseType[Order]):
     pass
+
+
+class MonthlySalesReportSaleProduct(BaseModel):
+    product_id: int
+    product_name: str
+    product_code: str
+    total_sales: float
+
+
+class MonthlySalesReport(BaseModel):
+    month: str
+    sale_products: list[MonthlySalesReportSaleProduct]
+    total_sales: float
+    inventory_cost: float
+    total_profit: float
+
+
+class MonthlySalesReportResponse(ResponseType[MonthlySalesReport]):
+    pass

@@ -62,3 +62,25 @@ class CustomerService:
             message="Customer updated successfully",
             data=customer.to_dict(),
         )
+
+    def get_monthly_sales_report(self, month: int, year: int):
+        reports = []
+        customers = self.db.query(Customer).all()
+        for customer in customers:
+            sales_by_product = customer.calculate_monthly_sales_by_product(month, year)
+            if sales_by_product:
+                reports.append(
+                    {
+                        "customer_name": customer.fullname,
+                        "phone": customer.phone,
+                        "email": customer.email,
+                        "address": customer.address,
+                        "sale_products": sales_by_product,
+                        "total_sales": customer.calculate_monthly_sales(month, year),
+                    }
+                )
+        return ResponseHelper.response_data(
+            success=True,
+            message="Monthly sales report generated successfully",
+            data=reports,
+        )

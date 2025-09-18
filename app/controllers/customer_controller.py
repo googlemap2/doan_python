@@ -32,3 +32,6 @@ class CustomerController:
     def update_customer(self, phone: str, user_id: int) -> GetCustomerResponse:
         response = self.customer_service.update_customer(phone=phone, user_id=user_id)
         return response
+
+    def get_monthly_sales_report(self, month: int, year: int):
+        return self.customer_service.get_monthly_sales_report(month, year)

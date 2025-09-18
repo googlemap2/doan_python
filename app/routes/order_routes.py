@@ -1,4 +1,5 @@
 from typing import Optional
+from urllib import response
 from fastapi import APIRouter, Query
 from fastapi.security import HTTPBearer
 from app.controllers.order_controller import OrderController
@@ -8,6 +9,7 @@ from app.schemas.order_schema import (
     CreateOrderResponse,
     GetOrderResponse,
     GetOrdersResponse,
+    MonthlySalesReportResponse,
     UpdateOrder,
 )
 
@@ -45,6 +47,17 @@ def get_order(order_code: str) -> GetOrderResponse:
 
 
 @router.put("/{order_code}", response_model=GetOrderResponse)
-def update_order(order_code: str, order_data: UpdateOrder, request: Request) -> GetOrderResponse:
+def update_order(
+    order_code: str, order_data: UpdateOrder, request: Request
+) -> GetOrderResponse:
     user_id = getattr(request.state, "user_id", None)
     return order_controller.update_order(order_code, order_data, user_id)
+
+
+@router.get("/sales/report_monthly", response_model=MonthlySalesReportResponse)
+def get_monthly_sales_report(
+    month: int,
+    year: int,
+    username: str | None = Query(None, description="Filter by username"),
+) -> MonthlySalesReportResponse:
+    return order_controller.get_monthly_sales_report(username, month, year)

@@ -31,7 +31,16 @@ def get_customers(
 def get_customer(phone: str) -> GetCustomerResponse:
     return customer_controller.get_customer(phone=phone)
 
+
 @router.put("/{phone}", response_model=GetCustomerResponse)
 def update_customer(phone: str, request: Request):
     user_id = getattr(request.state, "user_id", None)
     return customer_controller.update_customer(phone=phone, user_id=user_id)
+
+
+@router.get("/sales/report_monthly")
+def get_monthly_sales_report(
+    month: int,
+    year: int,
+):
+    return customer_controller.get_monthly_sales_report(month, year)

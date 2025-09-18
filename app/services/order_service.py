@@ -11,6 +11,7 @@ from app.schemas.order_schema import (
     CreateOrderResponse,
     GetOrderResponse,
     GetOrdersResponse,
+    MonthlySalesReportResponse,
     UpdateOrder,
 )
 from app.models.order import Order
@@ -266,4 +267,53 @@ class OrderService:
             success=True,
             message="Order updated successfully",
             data=order.to_dict(),
+        )
+
+    def get_monthly_sales_report(
+        self, username: str | None, month: int, year: int
+    ) -> MonthlySalesReportResponse:
+        report = {
+            "month": f"{month}-{year}",
+            "sale_products": [],
+            "total_sales": 0,
+            "inventory_cost": 0,
+            "total_profit": 0,
+        }
+        if username is not None:
+            user = (
+                self.db.query(User)
+                .filter(User.username == username, User.is_active == True)
+                .first()
+            )
+            if user:
+                sales_data = user.calculate_monthly_sales_by_product(
+                    int(month), int(year)
+                )
+                report = {
+                    "month": f"{month}-{year}",
+                    "sale_products": sales_data,
+                    "total_sales": user.calculate_monthly_sales(int(month), int(year)),
+                    "inventory_cost": user.calculate_monthly_inventory_cost(
+                        int(month), int(year)
+                    ),
+                }
+        else:
+            products = self.db.query(Product).all()
+            for product in products:
+                sales_data = product.calculate_monthly_sales_by_product(
+                    int(month), int(year)
+                )
+                report["sale_products"].extend(sales_data)
+                report["total_sales"] += product.calculate_monthly_sales(
+                    int(month), int(year)
+                )
+                report["inventory_cost"] += product.calculate_monthly_inventory_cost(
+                    int(month), int(year)
+                )
+
+        report["total_profit"] = report["total_sales"] - report["inventory_cost"]
+        return ResponseHelper.response_data(
+            success=True,
+            message="Monthly sales report generated successfully",
+            data=report,
         )
