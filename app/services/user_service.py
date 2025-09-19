@@ -23,29 +23,30 @@ class UserService:
         self.db = SessionLocal()
 
     def login_user(self, user_data: UserLogin) -> TokenResponse:
+        """Đăng nhập người dùng và trả về token JWT"""
         user = self.db.query(User).filter(User.username == user_data.username).first()
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid username or password",
+                detail="Tên đăng nhập hoặc mật khẩu không đúng",
             )
 
         if not verify_password(user_data.password, user.password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid username or password",
+                detail="Tên đăng nhập hoặc mật khẩu không đúng",
             )
 
         access_token = create_access_token(data={"sub": user.username})
         return ResponseHelper.response_data(
             data={"access_token": access_token, "token_type": "bearer"},
-            message="Login successful",
         )
 
     def create_user(self, user_data: UserCreate) -> CreateUserResponse:
+        """Tạo mới người dùng"""
         if self.check_user_exists(user_data.username):
             return ResponseHelper.response_data(
-                message="User already exists", success=False
+                message="Người dùng đã tồn tại", success=False
             )
         user_data.password = hash_password(user_data.password)
         new_user = User(
@@ -57,9 +58,10 @@ class UserService:
         )
         self.db.add(new_user)
         self.db.commit()
-        return ResponseHelper.response_data(message="User created successfully")
+        return ResponseHelper.response_data(data=new_user.to_dict())
 
     def check_user_exists(self, username: str) -> bool:
+        """Kiểm tra người dùng đã tồn tại chưa"""
         return self.db.query(User).filter(User.username == username).first() is not None
 
     def get_users(
@@ -69,6 +71,7 @@ class UserService:
         address: str | None = None,
         fullname: str | None = None,
     ) -> GetUsersResponse:
+        """Lấy danh sách người dùng với các bộ lọc tùy chọn"""
         query = self.db.query(User)
         query = query.filter(User.is_active == True)
         query = query.filter(User.deleted_at == None)
@@ -82,23 +85,27 @@ class UserService:
             query = query.filter(User.fullname.ilike(f"%{fullname}%"))
         users = query.all()
         return ResponseHelper.response_data(
-            success=True,
-            message="Users retrieved successfully",
             data=[user.to_dict() for user in users],
         )
 
     def get_user(self, id: int) -> GetUserResponse:
+        """Lấy thông tin người dùng theo id"""
         user = self.db.query(User).filter(User.id == id).first()
         if user:
             return ResponseHelper.response_data(
-                success=True, message="User retrieved successfully", data=user.to_dict()
+                data=user.to_dict(),
             )
-        return ResponseHelper.response_data(success=False, message="User not found")
+        return ResponseHelper.response_data(
+            success=False, message="Không tìm thấy người dùng"
+        )
 
     def update_user(self, id: int, user_data, user_id: int) -> GetUserResponse:
+        """Cập nhật thông tin người dùng"""
         user = self.db.query(User).filter(User.id == id).first()
         if not user:
-            return ResponseHelper.response_data(message="User not found", success=False)
+            return ResponseHelper.response_data(
+                message="Không tìm thấy người dùng", success=False
+            )
         if user_data.fullname is not None:
             user.fullname = user_data.fullname
         if user_data.phone is not None:
@@ -111,19 +118,18 @@ class UserService:
             user.password = hash_password(user_data.password)
         user.updated_by = user_id
         self.db.commit()
-        return ResponseHelper.response_data(
-            data=user.to_dict(), message="User updated successfully"
-        )
+        return ResponseHelper.response_data(data=user.to_dict())
 
     def delete_user(self, id: int, user_id: int) -> GetUserResponse:
+        """Xóa người dùng"""
         user = self.db.query(User).filter(User.id == id).first()
         if not user:
-            return ResponseHelper.response_data(message="User not found", success=False)
+            return ResponseHelper.response_data(
+                message="Không tìm thấy người dùng", success=False
+            )
         user.is_active = False
         user.deleted_at = datetime.now()
         user.deleted_by = user_id
         user.updated_by = user_id
         self.db.commit()
-        return ResponseHelper.response_data(
-            data=user.to_dict(), message="Delete successed"
-        )
+        return ResponseHelper.response_data(data=user.to_dict())

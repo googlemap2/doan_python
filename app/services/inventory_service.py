@@ -26,7 +26,7 @@ class InventoryService:
         """Nhập kho sản phẩm"""
         if not self.product_service.check_product_exists(inventory_data.product_id):
             return ResponseHelper.response_data(
-                success=False, message="Product does not exist"
+                success=False, message="Sản phẩm không tồn tại"
             )
         inventory = Inventory(
             product_id=inventory_data.product_id,
@@ -38,9 +38,7 @@ class InventoryService:
         )
         self.db.add(inventory)
         self.db.commit()
-        return ResponseHelper.response_data(
-            data=inventory.to_dict(), message="Inventory imported successfully"
-        )
+        return ResponseHelper.response_data(data=inventory.to_dict())
 
     def get_inventory_by_product(self, product_id: int) -> GetInventoryProductResponse:
         """Lấy thông tin tồn kho của sản phẩm"""
@@ -52,7 +50,7 @@ class InventoryService:
         )
         if not inventory:
             return ResponseHelper.response_data(
-                success=False, message="No inventory found for this product"
+                success=False, message="Không tìm thấy tồn kho cho sản phẩm này"
             )
         result = {
             "product_id": product_id,
@@ -60,9 +58,7 @@ class InventoryService:
             "total_quantity": sum(item.quantity for item in inventory),
             "product": inventory[0].product.to_dict() if inventory else None,
         }
-        return ResponseHelper.response_data(
-            data=result, message="Inventory fetched successfully"
-        )
+        return ResponseHelper.response_data(data=result)
 
     def get_inventory_products(
         self, product_name: str | None = None, product_code: str | None = None
@@ -90,14 +86,13 @@ class InventoryService:
             inventory_dict[item.product_id]["total_quantity"] += item.quantity
         result = list(inventory_dict.values())
         return ResponseHelper.response_data(
-            success=True,
-            message="Inventory products retrieved successfully",
             data=result,
         )
 
     def get_inventories(
         self, product_name: str | None = None, product_code: str | None = None
     ) -> GetInventoriesResponse:
+        """Lấy danh sách tất cả các lô hàng tồn kho theo bộ lọc"""
         query = self.db.query(Inventory).filter(Inventory.deleted_at == None)
         if product_name:
             query = query.join(Inventory.product).filter(
@@ -107,24 +102,22 @@ class InventoryService:
             query = query.join(Inventory.product).filter(Product.code == product_code)
         inventories = query.all()
         return ResponseHelper.response_data(
-            success=True,
-            message="Inventories retrieved successfully",
             data=[inventory.to_dict() for inventory in inventories],
         )
 
     def get_inventory(self, id: int) -> GetInventoryResponse:
+        """Lấy thông tin tồn lô hàng theo id"""
         inventory = self.db.query(Inventory).filter(Inventory.id == id).first()
         if not inventory:
             return ResponseHelper.response_data(
-                success=False, message="Inventory not found"
+                success=False, message="Không tìm thấy lô hàng tồn kho"
             )
-        return ResponseHelper.response_data(
-            data=inventory.to_dict(), message="Inventory fetched successfully"
-        )
+        return ResponseHelper.response_data(data=inventory.to_dict())
 
     def update_inventory(
         self, id: int, inventory_data: UpdateInventory, user_id: int
     ) -> GetInventoryResponse:
+        """Cập nhật thông tin lô hàng tồn kho"""
         inventory = (
             self.db.query(Inventory)
             .filter(Inventory.id == id)
@@ -133,12 +126,12 @@ class InventoryService:
         )
         if not inventory:
             return ResponseHelper.response_data(
-                success=False, message="Inventory not found"
+                success=False, message="Không tìm thấy lô hàng tồn kho"
             )
         if inventory.quantity != inventory.quantity_in:
             return ResponseHelper.response_data(
                 success=False,
-                message="Cannot update inventory that has been partially used",
+                message="Không thể cập nhật lô hàng đã được sử dụng một phần",
             )
         inventory.quantity = inventory_data.quantity
         inventory.quantity_in = inventory_data.quantity
@@ -146,25 +139,22 @@ class InventoryService:
         inventory.price = inventory_data.price
         inventory.updated_by = user_id
         self.db.commit()
-        return ResponseHelper.response_data(
-            data=inventory.to_dict(), message="Inventory updated successfully"
-        )
+        return ResponseHelper.response_data(data=inventory.to_dict())
 
     def delete_inventory(self, id: int, user_id: int) -> GetInventoryResponse:
+        """Xóa lô hàng tồn kho"""
         inventory = self.db.query(Inventory).filter(Inventory.id == id).first()
         if not inventory:
             return ResponseHelper.response_data(
-                success=False, message="Inventory not found"
+                success=False, message="Không tìm thấy lô hàng tồn kho"
             )
         if inventory.quantity != inventory.quantity_in:
             return ResponseHelper.response_data(
                 success=False,
-                message="Cannot delete inventory that has been partially used",
+                message="Không thể xóa lô hàng đã được sử dụng một phần",
             )
         inventory.deleted_at = datetime.now()
         inventory.deleted_by = user_id
         inventory.updated_by = user_id
         self.db.commit()
-        return ResponseHelper.response_data(
-            data=inventory.to_dict(), message="Inventory deleted successfully"
-        )
+        return ResponseHelper.response_data(data=inventory.to_dict())

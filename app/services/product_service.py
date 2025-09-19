@@ -21,13 +21,14 @@ class ProductService:
     def create_product(
         self, product_data: CreateProduct, user_id: int
     ) -> CreateProductResponse:
+        """Tạo mới sản phẩm"""
         if self.check_product_code_exists(product_data.code):
             return ResponseHelper.response_data(
-                success=False, message="Product code already exists"
+                success=False, message="Mã sản phẩm đã tồn tại"
             )
         if not self.check_brand_exists(product_data.brand_id):
             return ResponseHelper.response_data(
-                success=False, message="Brand does not exist"
+                success=False, message="Thương hiệu không tồn tại"
             )
         product = Product(
             name=product_data.name,
@@ -44,25 +45,26 @@ class ProductService:
         )
         self.db.add(product)
         self.db.commit()
-        return ResponseHelper.response_data(
-            success=True, message="Product created successfully", data=product.to_dict()
-        )
+        return ResponseHelper.response_data(data=product.to_dict())
 
     def check_product_code_exists(self, code: str) -> bool:
+        """Kiểm tra mã sản phẩm đã tồn tại chưa"""
         return self.db.query(Product).filter(Product.code == code).first() is not None
 
     def check_brand_exists(self, brand_id: int) -> bool:
+        """Kiểm tra thương hiệu có tồn tại không"""
         return self.db.query(Brand).filter(Brand.id == brand_id).first() is not None
 
     def get_product_by_id(self, product_id: int) -> GetProductResponse:
+        """Lấy thông tin sản phẩm theo id"""
         product = self.db.query(Product).filter(Product.id == product_id).first()
         if product:
             return ResponseHelper.response_data(
-                success=True,
-                message="Product retrieved successfully",
                 data=product.to_dict(),
             )
-        return ResponseHelper.response_data(success=False, message="Product not found")
+        return ResponseHelper.response_data(
+            success=False, message="Không tìm thấy sản phẩm"
+        )
 
     def get_products(
         self,
@@ -71,6 +73,7 @@ class ProductService:
         color: str | None,
         capacity: str | None,
     ) -> GetProductsResponse:
+        """Lấy danh sách sản phẩm với bộ lọc"""
         query = self.db.query(Product)
         query = query.filter(Product.deleted_at == None)
         if name:
@@ -83,24 +86,23 @@ class ProductService:
             query = query.filter(Product.capacity.ilike(f"%{capacity}%"))
         products = query.all()
         return ResponseHelper.response_data(
-            success=True,
-            message="Products retrieved successfully",
             data=[product.to_dict() for product in products],
         )
 
     def update_product(
         self, product_id: int, product_data: UpdateProduct, user_id: int
     ) -> UpdateProductResponse:
+        """Cập nhật thông tin sản phẩm"""
         product = self.db.query(Product).filter(Product.id == product_id).first()
         if not product:
             return ResponseHelper.response_data(
-                success=False, message="Product not found"
+                success=False, message="Không tìm thấy sản phẩm"
             )
         if product_data.brand_id is not None:
             product.brand_id = product_data.brand_id
             if not self.check_brand_exists(product_data.brand_id):
                 return ResponseHelper.response_data(
-                    success=False, message="Brand does not exist"
+                    success=False, message="Thương hiệu không tồn tại"
                 )
         if product_data.name is not None:
             product.name = product_data.name
@@ -120,11 +122,10 @@ class ProductService:
             product.is_active = product_data.is_active
         product.updated_by = user_id
         self.db.commit()
-        return ResponseHelper.response_data(
-            success=True, message="Product updated successfully", data=product.to_dict()
-        )
+        return ResponseHelper.response_data(data=product.to_dict())
 
     def check_product_exists(self, product_id: int) -> bool:
+        """Kiểm tra sản phẩm có tồn tại không"""
         return (
             self.db.query(Product)
             .filter(Product.id == product_id)
@@ -134,21 +135,21 @@ class ProductService:
         )
 
     def delete_product(self, product_id: int, user_id: int) -> UpdateProductResponse:
+        """Xóa sản phẩm"""
         product = self.db.query(Product).filter(Product.id == product_id).first()
         if not product:
             return ResponseHelper.response_data(
-                success=False, message="Product not found"
+                success=False, message="Không tìm thấy sản phẩm"
             )
         product.is_active = False
         product.updated_by = user_id
         product.deleted_at = datetime.now()
         product.deleted_by = user_id
         self.db.commit()
-        return ResponseHelper.response_data(
-            success=True, message="Product deleted successfully", data=product.to_dict()
-        )
+        return ResponseHelper.response_data(data=product.to_dict())
 
     def get_product_by_ids(self, product_ids: list[int]) -> list[Product]:
+        """Lấy danh sách sản phẩm theo danh sách id"""
         products = (
             self.db.query(Product)
             .filter(Product.id.in_(product_ids))

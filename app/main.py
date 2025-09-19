@@ -21,7 +21,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    description="Web API cho đồ án môn học - Được xây dựng với FastAPI và SQLAlchemy",
+    description="Web API cho quản lý bán hàng điện thoại",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -46,7 +46,7 @@ app.include_router(customer_router)
 @app.get("/")
 async def root(request: Request):
     return {
-        "message": "API đồ án môn học!",
+        "message": "API quản lý bán hàng điện thoại",
         "host": request.headers.get("host"),
         "app": settings.app_name,
         "version": settings.app_version,

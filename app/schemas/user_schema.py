@@ -61,7 +61,7 @@ class TokenResponse(ResponseType[Token]):
     pass
 
 
-class CreateUserResponse(ResponseType[None]):
+class CreateUserResponse(ResponseType[UserResponse]):
     pass
 
 

@@ -9,22 +9,23 @@ from app.config.settings import settings
 from app.config.database import get_db
 from app.models.user import User
 
-# Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# JWT
 security = HTTPBearer()
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Xác minh mật khẩu"""
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
+    """Lấy hash của mật khẩu"""
     return pwd_context.hash(password)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """Tạo token truy cập api"""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now() + expires_delta
@@ -41,6 +42,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 def verify_token(token: str) -> Optional[str]:
+    """Xác minh token và trả về tên đăng nhập"""
     try:
         payload = jwt.decode(
             token, settings.secret_key, algorithms=[settings.algorithm]

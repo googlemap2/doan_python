@@ -30,12 +30,12 @@ class OrderService:
     def create_order(
         self, order_data: CreateOrder, user_id: int
     ) -> CreateOrderResponse:
-
+        """Tạo đơn hàng mới"""
         product_ids = [item.product_id for item in order_data.order_item]
         get_products = self.product_service.get_product_by_ids(product_ids)
         if len(get_products) != len(product_ids):
             return ResponseHelper.response_data(
-                success=False, message="One or more products do not exist"
+                success=False, message="Một hoặc nhiều sản phẩm không tồn tại"
             )
 
         get_stock = self.check_stock_availability(order_data.order_item)
@@ -81,7 +81,7 @@ class OrderService:
         for item in order_data.order_item:
             if item.product_id not in [product.id for product in get_products]:
                 return ResponseHelper.response_data(
-                    success=False, message="One or more products do not exist"
+                    success=False, message="Một hoặc nhiều sản phẩm không tồn tại"
                 )
             product = next((p for p in get_products if p.id == item.product_id), None)
             order_item_id = uuid4()
@@ -107,9 +107,7 @@ class OrderService:
         self.db.commit()
         self.db.refresh(order)
 
-        return ResponseHelper.response_data(
-            data=order.to_dict(), message="Order created successfully"
-        )
+        return ResponseHelper.response_data(data=order.to_dict())
 
     def check_stock_availability(self, order_items) -> dict:
         """Kiểm tra tồn kho có đủ cho đơn hàng không"""
@@ -134,10 +132,10 @@ class OrderService:
                 )
                 return ResponseHelper.response_data(
                     success=False,
-                    message=f"Insufficient stock for product {product.name}.",
+                    message=f"Không đủ tồn kho cho sản phẩm {product.name}.",
                 )
 
-        return ResponseHelper.response_data(success=True, message="Stock available")
+        return ResponseHelper.response_data()
 
     def fifo_stock_deduction(self, order_items):
         """
@@ -163,7 +161,7 @@ class OrderService:
             if not inventories:
                 return ResponseHelper.response_data(
                     success=False,
-                    message=f"No inventory found for product {order_item.product_id}",
+                    message=f"Không tìm thấy tồn kho cho sản phẩm {order_item.product_id}",
                 )
 
             for inventory in inventories:
@@ -186,12 +184,10 @@ class OrderService:
             if remaining_quantity > 0:
                 return ResponseHelper.response_data(
                     success=False,
-                    message=f"Insufficient stock for product {order_item.product_id}. "
-                    f"Still need {remaining_quantity} more units",
+                    message=f"Không đủ tồn kho cho sản phẩm {order_item.product_id}. "
+                    f"Vẫn cần thêm {remaining_quantity} đơn vị",
                 )
         return ResponseHelper.response_data(
-            success=True,
-            message="Stock deducted successfully using FIFO method",
             data=order_item_inventories,
         )
 
@@ -203,8 +199,8 @@ class OrderService:
         product_code: str | None = None,
         username: str | None = None,
     ) -> GetOrdersResponse:
+        """Lấy danh sách đơn hàng với bộ lọc"""
         query = self.db.query(Order)
-
         if customer_name:
             query = query.join(Customer).filter(
                 Customer.fullname.ilike(f"%{customer_name}%")
@@ -230,31 +226,29 @@ class OrderService:
         orders = query.all()
         orders_data = [order.to_dict() for order in orders]
 
-        return ResponseHelper.response_data(
-            data=orders_data, message="Orders retrieved successfully"
-        )
+        return ResponseHelper.response_data(data=orders_data)
 
     def get_order(self, order_code: str) -> GetOrderResponse:
+        """Lấy thông tin đơn hàng theo mã đơn hàng"""
         order = self.db.query(Order).filter(Order.code == order_code).first()
         if not order:
             return ResponseHelper.response_data(
                 success=False,
-                message=f"Order with code {order_code} not found.",
+                message=f"Không tìm thấy đơn hàng có mã {order_code}.",
             )
         return ResponseHelper.response_data(
-            success=True,
-            message="Order retrieved successfully",
             data=order.to_dict(),
         )
 
     def update_order(
         self, order_code: str, order_data: UpdateOrder, usrer_id: int
     ) -> GetOrderResponse:
+        """Cập nhật thông tin đơn hàng"""
         order = self.db.query(Order).filter(Order.code == order_code).first()
         if not order:
             return ResponseHelper.response_data(
                 success=False,
-                message=f"Order with code {order_code} not found.",
+                message=f"Không tìm thấy đơn hàng có mã {order_code}.",
             )
         if order_data.address_delivery is not None:
             order.address_delivery = order_data.address_delivery
@@ -264,14 +258,13 @@ class OrderService:
         self.db.commit()
         self.db.refresh(order)
         return ResponseHelper.response_data(
-            success=True,
-            message="Order updated successfully",
             data=order.to_dict(),
         )
 
     def get_monthly_sales_report(
         self, username: str | None, month: int, year: int
     ) -> MonthlySalesReportResponse:
+        """Báo cáo doanh số bán hàng theo tháng"""
         report = {
             "month": f"{month}-{year}",
             "sale_products": [],
@@ -312,8 +305,4 @@ class OrderService:
                 )
 
         report["total_profit"] = report["total_sales"] - report["inventory_cost"]
-        return ResponseHelper.response_data(
-            success=True,
-            message="Monthly sales report generated successfully",
-            data=report,
-        )
+        return ResponseHelper.response_data(data=report)

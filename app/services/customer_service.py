@@ -36,7 +36,9 @@ class CustomerService:
         customer_list = [customer.to_dict() for customer in customers]
 
         return ResponseHelper.response_data(
-            success=True, data=customer_list, message="Customers retrieved successfully"
+            success=True,
+            data=customer_list,
+            message="Lấy danh sách khách hàng thành công",
         )
 
     def get_customer(self, phone: str) -> GetCustomerResponse:
@@ -45,11 +47,11 @@ class CustomerService:
         if not customer:
             return ResponseHelper.response_data(
                 success=False,
-                message=f"Customer with phone {phone} not found.",
+                message=f"Không tìm thấy khách hàng có số điện thoại {phone}",
             )
         return ResponseHelper.response_data(
             success=True,
-            message="Customer retrieved successfully",
+            message="Lấy thông tin khách hàng thành công",
             data=customer.to_dict(),
         )
 
@@ -59,14 +61,14 @@ class CustomerService:
         if not customer:
             return ResponseHelper.response_data(
                 success=False,
-                message=f"Customer with phone {phone} not found.",
+                message=f"Không tìm thấy khách hàng có số điện thoại {phone}",
             )
         customer.updated_by = user_id
         self.db.commit()
         self.db.refresh(customer)
         return ResponseHelper.response_data(
             success=True,
-            message="Customer updated successfully",
+            message="Cập nhật thông tin khách hàng thành công",
             data=customer.to_dict(),
         )
 
@@ -91,6 +93,6 @@ class CustomerService:
                 )
         return ResponseHelper.response_data(
             success=True,
-            message="Monthly sales report generated successfully",
+            message="Tạo báo cáo doanh số bán hàng theo tháng thành công",
             data=reports,
         )
