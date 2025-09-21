@@ -40,9 +40,7 @@ class CustomerService:
         ]
 
         return ResponseHelper.response_data(
-            success=True,
             data=customer_list,
-            message="Lấy danh sách khách hàng thành công",
         )
 
     def get_customer(self, phone: str) -> GetCustomerResponse:
@@ -54,8 +52,6 @@ class CustomerService:
                 message=f"Không tìm thấy khách hàng có số điện thoại {phone}",
             )
         return ResponseHelper.response_data(
-            success=True,
-            message="Lấy thông tin khách hàng thành công",
             data={**customer.to_dict(), "order_codes": customer.get_order_codes()},
         )
 
@@ -79,8 +75,6 @@ class CustomerService:
         self.db.commit()
         self.db.refresh(customer)
         return ResponseHelper.response_data(
-            success=True,
-            message="Cập nhật thông tin khách hàng thành công",
             data={**customer.to_dict(), "order_codes": customer.get_order_codes()},
         )
 
@@ -106,7 +100,5 @@ class CustomerService:
                     }
                 )
         return ResponseHelper.response_data(
-            success=True,
-            message="Tạo báo cáo doanh số bán hàng theo tháng thành công",
             data=reports,
         )
