@@ -34,7 +34,10 @@ class CustomerService:
             query = query.filter(Customer.email.ilike(f"%{email}%"))
 
         customers = query.all()
-        customer_list = [customer.to_dict() for customer in customers]
+        customer_list = [
+            {**customer.to_dict(), "order_codes": customer.get_order_codes()}
+            for customer in customers
+        ]
 
         return ResponseHelper.response_data(
             success=True,
@@ -53,7 +56,7 @@ class CustomerService:
         return ResponseHelper.response_data(
             success=True,
             message="Lấy thông tin khách hàng thành công",
-            data=customer.to_dict(),
+            data={**customer.to_dict(), "order_codes": customer.get_order_codes()},
         )
 
     def update_customer(
@@ -78,7 +81,7 @@ class CustomerService:
         return ResponseHelper.response_data(
             success=True,
             message="Cập nhật thông tin khách hàng thành công",
-            data=customer.to_dict(),
+            data={**customer.to_dict(), "order_codes": customer.get_order_codes()},
         )
 
     def get_monthly_sales_report(
