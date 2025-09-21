@@ -18,6 +18,7 @@ class Customer(BaseModel):
     updated_at: Optional[str] = None
     created_by_user: User
     updated_by_user: Optional[User] = None
+    order_codes: list[str] = []
 
     class Config:
         from_attributes = True
@@ -55,6 +56,7 @@ class MonthlySalesReport(BaseModel):
     address: Optional[str] = None
     sale_products: list[MonthlySalesReportSaleProduct]
     total_sales: float
+    order_codes: list[str] = []
 
     class Config:
         from_attributes = True

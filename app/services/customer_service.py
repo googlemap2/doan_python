@@ -80,6 +80,7 @@ class CustomerService:
         customers = self.db.query(Customer).all()
         for customer in customers:
             sales_by_product = customer.calculate_monthly_sales_by_product(month, year)
+            customer_order_codes = customer.get_order_codes()
             if sales_by_product:
                 reports.append(
                     {
@@ -89,6 +90,7 @@ class CustomerService:
                         "address": customer.address,
                         "sale_products": sales_by_product,
                         "total_sales": customer.calculate_monthly_sales(month, year),
+                        "order_codes": customer_order_codes,
                     }
                 )
         return ResponseHelper.response_data(

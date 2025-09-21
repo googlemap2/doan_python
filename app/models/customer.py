@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, Text, DateTime, func, ForeignKey
 from sqlalchemy.orm import relationship
 from app.config.database import Base
+from app.models import order
 
 
 class Customer(Base):
@@ -40,8 +41,6 @@ class Customer(Base):
                 self.updated_by_user.to_dict() if self.updated_by_user else None
             ),
         }
-
-    orders = relationship("Order", back_populates="customer")
 
     def calculate_monthly_sales(self, month: int, year: int) -> float:
         """Tính doanh số mua hàng trong tháng"""
@@ -92,6 +91,10 @@ class Customer(Base):
                             }
                         )
         return sales_by_product
+
+    def get_order_codes(self):
+        """Lấy tất cả các mã đơn hàng của khách hàng"""
+        return [order.to_dict()["code"] for order in self.orders]
 
     def __repr__(self):
         return f"<Customer(id={self.id}, fullname='{self.fullname}', phone='{self.phone}')>"
