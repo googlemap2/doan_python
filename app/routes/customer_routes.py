@@ -5,6 +5,7 @@ from fastapi import Request
 
 from app.controllers.customer_controller import CustomerController
 from app.schemas.customer_schema import (
+    CustomerUpdate,
     GetCustomerResponse,
     GetCustomersResponse,
     MonthlySalesReportResponse,
@@ -39,10 +40,16 @@ def get_customer(phone: str) -> GetCustomerResponse:
 
 
 @router.put("/{phone}", response_model=GetCustomerResponse)
-def update_customer(phone: str, request: Request) -> GetCustomerResponse:
+def update_customer(
+    phone: str, data_update: CustomerUpdate, request: Request
+) -> GetCustomerResponse:
     """Cập nhật thông tin khách hàng"""
     user_id = getattr(request.state, "user_id", None)
-    return customer_controller.update_customer(phone=phone, user_id=user_id)
+    return customer_controller.update_customer(
+        phone=phone,
+        data_update=data_update,
+        user_id=user_id,
+    )
 
 
 @router.get("/sales/report_monthly", response_model=MonthlySalesReportResponse)

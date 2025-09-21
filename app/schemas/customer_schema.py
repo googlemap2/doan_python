@@ -31,6 +31,12 @@ class CustomerCreateOrder(BaseModel):
     email: Optional[str] = None
 
 
+class CustomerUpdate(BaseModel):
+    fullname: str | None = None
+    address: Optional[str] = None
+    email: Optional[str] = None
+
+
 class GetCustomersResponse(ResponseType[list[Customer]]):
     pass
 

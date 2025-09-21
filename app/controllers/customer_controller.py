@@ -1,5 +1,6 @@
 from app.config.database import SessionLocal
 from app.schemas.customer_schema import (
+    CustomerUpdate,
     GetCustomerResponse,
     GetCustomersResponse,
     MonthlySalesReportResponse,
@@ -35,9 +36,13 @@ class CustomerController:
         response = self.customer_service.get_customer(phone=phone)
         return response
 
-    def update_customer(self, phone: str, user_id: int) -> GetCustomerResponse:
+    def update_customer(
+        self, phone: str, data_update: CustomerUpdate, user_id: int
+    ) -> GetCustomerResponse:
         """Cập nhật thông tin khách hàng"""
-        response = self.customer_service.update_customer(phone=phone, user_id=user_id)
+        response = self.customer_service.update_customer(
+            phone=phone, data_update=data_update, user_id=user_id
+        )
         return response
 
     def get_monthly_sales_report(

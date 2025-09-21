@@ -2,6 +2,7 @@ from datetime import datetime
 from app.config.database import SessionLocal
 from app.models.customer import Customer
 from app.schemas.customer_schema import (
+    CustomerUpdate,
     GetCustomerResponse,
     GetCustomersResponse,
     MonthlySalesReportResponse,
@@ -55,7 +56,9 @@ class CustomerService:
             data=customer.to_dict(),
         )
 
-    def update_customer(self, phone: str, user_id: int) -> GetCustomerResponse:
+    def update_customer(
+        self, phone: str, data_update: CustomerUpdate, user_id: int
+    ) -> GetCustomerResponse:
         """Cập nhật thông tin khách hàng"""
         customer = self.db.query(Customer).filter(Customer.phone == phone).first()
         if not customer:
@@ -64,6 +67,12 @@ class CustomerService:
                 message=f"Không tìm thấy khách hàng có số điện thoại {phone}",
             )
         customer.updated_by = user_id
+        if data_update.fullname is not None:
+            customer.fullname = data_update.fullname
+        if data_update.address is not None:
+            customer.address = data_update.address
+        if data_update.email is not None:
+            customer.email = data_update.email
         self.db.commit()
         self.db.refresh(customer)
         return ResponseHelper.response_data(
